@@ -9,6 +9,7 @@ import MissingPersons from '../../containers/MissingPersons/MissingPersons';
 import ReportCrime from '../../containers/Crimes/ReportCrime/ReportCrime';
 import ReportComplaint from '../../containers/Complaints/ReportComplaint/ReportComplaint';
 import ReportMissingPerson from '../../containers/MissingPersons/ReportMissingPerson/ReportMissingPerson';
+import RegisterReporter from '../../containers/Auth/RegisterReporter/RegisterReporter';
 
 import Aux from '../../hoc/Auxiliary/Auxiliary';
 import Logout from '../../containers/Auth/Logout/Logout';
@@ -28,6 +29,7 @@ class Layout extends Component{
             routes = (
             <Switch>
                 <Route path = "/auth" component = {Auth}/>
+                <Route path = "/register" component = {RegisterReporter}/>
                 <Route path = "/crimes" component = {Crimes}/>
                 <Route path = "/complaints" component = {Complaints}/>
                 <Route path = "/missingPersons" component = {MissingPersons}/>

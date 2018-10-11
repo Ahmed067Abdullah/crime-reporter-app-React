@@ -3,6 +3,7 @@ import * as actionTypes from '../actions/actionTypes';
 const initialState = {
     isAuth : false,
     isSignup : false,
+    isRegistered : false,
     uid : ''
 }
 
@@ -29,8 +30,14 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 isAuth : false,
                 isSignup : true,
+                isRegistered : false,
                 uid : ''
-            }         
+            }
+        case actionTypes.REGISTERED_REPORTER:
+            return{
+                ...state,
+                isRegistered : true
+            }        
         default:
             return state;     
     }

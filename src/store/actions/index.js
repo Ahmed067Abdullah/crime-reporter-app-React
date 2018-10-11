@@ -2,7 +2,8 @@ export {
     setSignin,
     setSignup,
     login,
-    logout
+    logout,
+    registeredReporter
 } from './auth';
 
 export {

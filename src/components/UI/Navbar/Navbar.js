@@ -10,6 +10,7 @@ class Navbar extends React.Component {
   };
 
   render() {
+    console.log(this.props.isRegistered)
     let navConflict = (
       <li className="nav-item active">
         <NavLink className="nav-link nav-text" to="/auth">Authenticate</NavLink>
@@ -21,7 +22,7 @@ class Navbar extends React.Component {
         <li className="nav-item dropdown">
           <a className="nav-link dropdown-toggle nav-text" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Profile</a>
           <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-            <Link className="dropdown-item" to="/register">Register</Link>
+            <Link className="dropdown-item" to="/register">{this.props.isRegistered ? "Update Profile" : "Register"}</Link>
             <Link className="dropdown-item" to="/myComplaints">My Reported Complaints</Link>
             <Link className="dropdown-item" to="/myCrimes">My Reported Crimes</Link>
             <Link className="dropdown-item" to="myMissingPersons">My Reported Missing Persons</Link>
@@ -60,7 +61,8 @@ class Navbar extends React.Component {
 
 const mapStateToProps = state => {
   return{
-    isAuth : state.auth.isAuth
+    isAuth : state.auth.isAuth,
+    isRegistered : state.auth.isRegistered
   }
 }
 export default connect(mapStateToProps)(Navbar);

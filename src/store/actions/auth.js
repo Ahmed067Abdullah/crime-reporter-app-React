@@ -24,3 +24,9 @@ export const logout = () => {
         type : actionTypes.LOGOUT
     }
 }
+
+export const registeredReporter = () => {
+    return {
+        type : actionTypes.REGISTERED_REPORTER
+    }
+}
