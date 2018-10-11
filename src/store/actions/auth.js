@@ -25,8 +25,15 @@ export const logout = () => {
     }
 }
 
-export const registeredReporter = () => {
+export const registeredReporter = (uname) => {
     return {
-        type : actionTypes.REGISTERED_REPORTER
+        type : actionTypes.REGISTERED_REPORTER,
+        uname
+    }
+}
+
+export const setAdmin = () => {
+    return {
+        type : actionTypes.SET_ADMIN
     }
 }

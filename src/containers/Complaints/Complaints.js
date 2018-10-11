@@ -90,7 +90,10 @@ class Complaints extends Component{
             <div>
                 {!this.state.loading ?  
                     <Aux>
-                        <button className = "btn btn-info my-reports-button" onClick = {this.clickedHandler}>Report New Complaint</button>
+                        <button 
+                            className = "btn btn-info my-reports-button" 
+                            disabled = {!this.props.isRegistered}
+                            onClick = {this.clickedHandler}>Report New Complaint</button>
                         <Reports
                             showCities = {complaintPage}
                             handleChange = {this.handleChange}
@@ -106,7 +109,8 @@ class Complaints extends Component{
 const mapStateToProps = state => {
     return{
         reports : state.reports.reports,
-        uid : state.auth.uid
+        uid : state.auth.uid,
+        isRegistered : state.auth.isRegistered
     }
 }
 

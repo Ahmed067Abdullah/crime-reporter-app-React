@@ -15,9 +15,6 @@ const styles = theme => {
         }
     }
 }
-// if(this.props.location.pathname === '/myCrimes'){
-    
-// }
 const reports = (props) => {
     return(
         <div>

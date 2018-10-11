@@ -14,9 +14,21 @@ class Navbar extends React.Component {
     let navConflict = (
       <li className="nav-item active">
         <NavLink className="nav-link nav-text" to="/auth">Authenticate</NavLink>
-    </li>)
+      </li>)
 
-    if(this.props.isAuth){
+    if(this.props.isAdmin){
+      navConflict = (
+        <Aux>
+          <li className="nav-item active">
+            <NavLink className="nav-link nav-text" to="/logout">Logout</NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink className="nav-link nav-text"to="/complaints">Complaints</NavLink>
+           </li>
+        </Aux>)
+    }
+    
+    else if(this.props.isAuth){
       navConflict = (
         <Aux>
         <li className="nav-item dropdown">
@@ -62,7 +74,8 @@ class Navbar extends React.Component {
 const mapStateToProps = state => {
   return{
     isAuth : state.auth.isAuth,
-    isRegistered : state.auth.isRegistered
+    isRegistered : state.auth.isRegistered,
+    isAdmin : state.auth.isAdmin
   }
 }
 export default connect(mapStateToProps)(Navbar);

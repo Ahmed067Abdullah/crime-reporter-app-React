@@ -15,8 +15,6 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { withStyles } from "@material-ui/core/styles";
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
-import Radio from '@material-ui/core/Radio';
-import FormLabel from '@material-ui/core/FormLabel';
 // Material UI Imports ens
 
 const styles = theme => {
@@ -25,16 +23,16 @@ const styles = theme => {
             marginBottom : "10px",
             marginTop : "10px",
             width : "95%"
-        }, 
-        formControl: {
-            marginTop : "10px",
-            width: "95%",
         },
         LastTextField : {
             marginBottom : "10px",
             marginTop : "-10px",
             width : "95%"
         },
+        Button : {
+            backgroundColor : "#374F6B",
+            color : "white"
+        }
     }
 }
 
@@ -101,7 +99,7 @@ class RegisterDonor extends Component{
         })
         .then(res => {
             this.setState({loading : false, error : null});
-            this.props.onSetRegistered();
+            this.props.onSetRegistered(name);
         })
         .catch(err => {
             this.setState({loading : false, error : err});
@@ -155,7 +153,7 @@ class RegisterDonor extends Component{
                         validators={['required','matchRegexp:^[0-9]*$']}
                         errorMessages={['This field is required','Invalid Age']}/><br/>
                         
-                    <FormControl className={this.props.classes.formControl}>
+                    <FormControl className = {this.props.classes.TextFields}>
                         <InputLabel htmlFor="bg">City</InputLabel>
                         <Select
                             value={this.state.city}
@@ -177,7 +175,7 @@ class RegisterDonor extends Component{
                         </Select>
                     </FormControl><br/>  
 
-                    <Button type="submit">{this.props.isRegistered ? "Update" : "Register"}</Button>
+                    <Button className = {this.props.classes.Button} type="submit">{this.props.isRegistered ? "Update" : "Register"}</Button>
                 </ValidatorForm>
             </Card>}
             </div>
@@ -194,7 +192,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return{
-        onSetRegistered : () => dispatch(actions.registeredReporter())        
+        onSetRegistered : (uname) => dispatch(actions.registeredReporter(uname))        
     }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(withStyles(styles)(RegisterDonor));

@@ -91,7 +91,7 @@ class Crimes extends Component{
                         <button 
                             className = {"btn btn-info my-reports-button"} 
                             onClick = {this.clickedHandler}
-                            disabled = {!this.props.uid}>Report New Crime</button>
+                            disabled = {!this.props.isRegistered}>Report New Crime</button>
                         <Reports
                             showCities = {crimesPage}
                             handleChange = {this.handleChange}
@@ -107,7 +107,8 @@ class Crimes extends Component{
 const mapStateToProps = state => {
     return{
         reports : state.reports.reports,
-        uid : state.auth.uid
+        uid : state.auth.uid,
+        isRegistered : state.auth.isRegistered
     }
 }
 

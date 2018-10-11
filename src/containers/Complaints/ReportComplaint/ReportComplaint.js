@@ -69,7 +69,7 @@ class ReportComplaint extends Component{
             description,
             against,
             reportedAt : date,
-            reportedBy : "Ahmed",
+            reportedBy : this.props.uname,
             reporterId : this.props.uid,
             status : "Pending"
         })
@@ -83,6 +83,7 @@ class ReportComplaint extends Component{
                 time : '',
                 description : '',
                 against : '',});
+            alert("Report Submitted Successfully");
         })
         .catch(err => {
             this.setState({loading : false, error : err});
@@ -183,7 +184,8 @@ const mapStateToProps = state => {
     return{
         isAuth : state.auth.isAuth,
         isSignup : state.auth.isSignup,
-        uid : state.auth.uid
+        uid : state.auth.uid,
+        uname : state.auth.uname
     }
 }
 

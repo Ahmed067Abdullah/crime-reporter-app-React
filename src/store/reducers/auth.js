@@ -4,7 +4,9 @@ const initialState = {
     isAuth : false,
     isSignup : false,
     isRegistered : false,
-    uid : ''
+    uid : '',
+    uname : '',
+    isAdmin : false
 }
 
 const reducer = (state = initialState, action) => {
@@ -31,12 +33,20 @@ const reducer = (state = initialState, action) => {
                 isAuth : false,
                 isSignup : true,
                 isRegistered : false,
-                uid : ''
+                isAdmin : false,
+                uid : '',
+                uname : ''
             }
         case actionTypes.REGISTERED_REPORTER:
             return{
                 ...state,
-                isRegistered : true
+                isRegistered : true,
+                uname : action.uname
+            }
+        case actionTypes.SET_ADMIN:
+            return{
+                ...state,
+                isAdmin : true
             }        
         default:
             return state;     

@@ -48,10 +48,9 @@ class MissingPersons extends Component{
     clickedHandler = () => {
         this.props.history.push("/reportMissingPerson")
     }
-
+    
     render(){
         const missingPersonsPage = this.props.location.pathname === '/missingPersons';
-        console.log(this.props)
         let reports = '';
         if(this.state.city === '' && missingPersonsPage)
             reports = <p className = "search-messsage">Please Select a City to Continue</p>
@@ -78,6 +77,7 @@ class MissingPersons extends Component{
                                     <strong>When</strong> : {report.time}<br/>
                                     <strong>City</strong> : {report.city}<br/>
                                     <strong>Status</strong> : {report.status}<br/>
+
                                 </Card>
                             </div> 
                         )   
@@ -92,7 +92,7 @@ class MissingPersons extends Component{
                         <button 
                             className = "btn btn-info my-reports-button" 
                             onClick = {this.clickedHandler}
-                            disabled = {!this.props.uid}>Report Missing Person</button>
+                            disabled = {!this.props.isRegistered}>Report Missing Person</button>
                         <Reports
                             showCities = {missingPersonsPage}
                             handleChange = {this.handleChange}
@@ -108,7 +108,8 @@ class MissingPersons extends Component{
 const mapStateToProps = state => {
     return{
         reports : state.reports.reports,
-        uid : state.auth.uid
+        uid : state.auth.uid,
+        isRegistered : state.auth.isRegistered
     }
 }
 

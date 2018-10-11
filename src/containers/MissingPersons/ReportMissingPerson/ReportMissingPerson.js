@@ -75,7 +75,7 @@ class ReportMissingPerson extends Component{
             time,
             condition,
             reportedAt : date,
-            reportedBy : "Ahmed",
+            reportedBy : this.props.uname,
             reporterId : this.props.uid,
             status : "Pending"
         })
@@ -91,6 +91,7 @@ class ReportMissingPerson extends Component{
                 time : '',
                 condition : ''
             });
+            alert("Report Submitted Successfully");
         })
         .catch(err => {
             this.setState({loading : false, error : err});
@@ -201,7 +202,8 @@ const mapStateToProps = state => {
     return{
         isAuth : state.auth.isAuth,
         isSignup : state.auth.isSignup,
-        uid : state.auth.uid
+        uid : state.auth.uid,
+        uname : state.auth.uname
     }
 }
 

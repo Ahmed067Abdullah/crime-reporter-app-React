@@ -76,16 +76,23 @@ class Auth extends Component{
             firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.pass)
             .then(res =>{
                 const uid = res.user.uid;
-                firebase.database().ref(`reporters/${uid}`).once('value')
+                if(uid === 'RkpPKqNLeaTeHS5poTCWTJd70fK2'){
+                    this.props.setAdmin()
+                    this.props.onLogin(uid);
+                    this.props.history.replace("/crimes");
+                }
+                else{
+                    firebase.database().ref(`reporters/${uid}`).once('value')
                     .then(res => {
                         this.props.onLogin(uid);
                         if(res.val())
-                            this.props.onSetRegistered();
+                            this.props.onSetRegistered(res.val().name);
                         this.props.history.replace("/crimes");
                     })
                     .catch(err => {
                         this.setState({error :err, loading : false})
                     })
+                }
             })    
             .catch(error =>{
                 this.setState({loading : false});
@@ -170,7 +177,8 @@ const mapDispatchToProps = dispatch => {
         onLogout : () => dispatch(actions.logout()),
         onSignin : () => dispatch(actions.setSignin()),
         onSignup : () => dispatch(actions.setSignup()),
-        onSetRegistered : () => dispatch(actions.registeredReporter())
+        onSetRegistered : (uname) => dispatch(actions.registeredReporter(uname)),
+        setAdmin : () => dispatch(actions.setAdmin())
     }
 }
 
