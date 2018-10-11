@@ -4,3 +4,7 @@ export {
     login,
     logout
 } from './auth';
+
+export {
+    setReports
+} from './reports'

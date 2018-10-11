@@ -5,6 +5,7 @@ import {createStore,  compose, combineReducers} from 'redux';
 import {Provider} from 'react-redux';
 
 import authReducers from './store/reducers/auth';
+import reportReducers from './store/reducers/reports';
 import './index.css';
 import App from './App';
 
@@ -22,7 +23,8 @@ initializeApp(config);
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const reducers = combineReducers({
-  auth : authReducers
+  auth : authReducers,
+  reports : reportReducers
 })
 
 const store = createStore( reducers, composeEnhancers() );

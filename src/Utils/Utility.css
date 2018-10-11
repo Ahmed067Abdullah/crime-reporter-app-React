@@ -1,0 +1,36 @@
+.my-reports-button{
+    margin: 15px auto;
+    margin-bottom: 20px;
+    display: block;
+    background-color : #374F6B !important;
+    color : white !important;
+}
+
+.card-container{
+    margin: 0px auto 10px;
+    width: 90%;
+    text-align: left;
+}
+
+.spinner{
+    margin-top: 200px;
+}
+
+.search-messsage{
+    margin-top : 20px;
+}
+
+@media (min-width : 500px) {
+    .card-container{
+        width: 30%;
+        display: inline-block;
+        margin-left: 1%;
+        margin-right: 1%;
+        height: 260px;
+        overflow:auto;
+        overflow-x: hidden;
+    }      
+    .missing-persons-card{
+        height: 300px;
+    }
+}

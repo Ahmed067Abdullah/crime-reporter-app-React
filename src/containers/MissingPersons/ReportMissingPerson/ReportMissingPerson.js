@@ -65,7 +65,6 @@ class ReportMissingPerson extends Component{
         this.setState({loading : true});
         const database = firebase.database();
         const {name, age, city, location, appearance, time, condition,} = this.state;
-        // this.props.uid
         const date = new Date().getTime();
         database.ref('missingPersons/').push({
             name,
@@ -76,7 +75,9 @@ class ReportMissingPerson extends Component{
             time,
             condition,
             reportedAt : date,
-            reportedBy : "123"
+            reportedBy : "Ahmed",
+            reporterId : this.props.uid,
+            status : "Pending"
         })
         .then(res => {
             this.setState({
@@ -199,7 +200,8 @@ class ReportMissingPerson extends Component{
 const mapStateToProps = state => {
     return{
         isAuth : state.auth.isAuth,
-        isSignup : state.auth.isSignup
+        isSignup : state.auth.isSignup,
+        uid : state.auth.uid
     }
 }
 

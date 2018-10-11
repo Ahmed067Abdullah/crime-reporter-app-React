@@ -8,7 +8,7 @@ import Select from '@material-ui/core/Select';
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 import { connect } from 'react-redux';
 import * as actions from '../../../store/actions/index';
-import * as firebase from 'firebase'
+import * as firebase from 'firebase';
 
 import Card from '../../../hoc/Card/Card';
 import Spinner from '../../../components/UI/Spinner/Spinner';
@@ -60,7 +60,6 @@ class ReportComplaint extends Component{
         this.setState({loading : true});
         const database = firebase.database();
         const {city,area,type,time,description,against} = this.state;
-        // this.props.uid
         const date = new Date().getTime();
         database.ref('complaints/').push({
             city,
@@ -70,7 +69,9 @@ class ReportComplaint extends Component{
             description,
             against,
             reportedAt : date,
-            reportedBy : "123"
+            reportedBy : "Ahmed",
+            reporterId : this.props.uid,
+            status : "Pending"
         })
         .then(res => {
             this.setState({
@@ -181,7 +182,8 @@ class ReportComplaint extends Component{
 const mapStateToProps = state => {
     return{
         isAuth : state.auth.isAuth,
-        isSignup : state.auth.isSignup
+        isSignup : state.auth.isSignup,
+        uid : state.auth.uid
     }
 }
 
