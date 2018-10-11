@@ -18,7 +18,9 @@ const styles = theme => {
         },
         button: {
             margin: theme.spacing.unit,
-            marginBottom : "15px"
+            marginBottom : "15px",
+            backgroundColor : "#374F6B",
+            color : "white"
           }
     }
 }
@@ -103,7 +105,7 @@ class Auth extends Component{
         }
         return(
             <div  className = "Main">
-            <p className="h1 heading font-weight-bold text-uppercase">Blood Bank</p>
+            <p className="h1 heading font-weight-bold text-uppercase">Crime Reporter</p>
             {!this.state.loading ?
                 <Card>
                     <p className = "Error">{this.state.error ? this.state.error  : null}</p>
@@ -131,7 +133,7 @@ class Auth extends Component{
                             validators={['required', 'isLongEnough']}
                             errorMessages={['This field is required', 'Password must be longer than 6 characters']}
                         /><br/>
-                        <Button type="submit" variant="contained" color="secondary" className={this.props.classes.button}>
+                        <Button type="submit" variant="contained"  className={this.props.classes.button}>
                             Submit
                         </Button>
                     </ValidatorForm>
