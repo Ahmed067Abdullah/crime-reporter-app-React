@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import * as firebase from 'firebase';
 import Card from '../../../hoc/Card/Card';
-import Aux from '../../../hoc/Auxiliary/Auxiliary';
 import Button from '@material-ui/core/Button';
 import { withStyles } from "@material-ui/core/styles";
 import InputLabel from '@material-ui/core/InputLabel';

@@ -24,7 +24,7 @@ class Layout extends Component{
                 <Route path = "/crimes" component = {Crimes}/>
                 <Route path = "/missingPersons" component = {MissingPersons}/>
                 <Route path = "/" exact component = {Auth}/>
-                <Redirect to = "/"/>
+                <Redirect to = "/auth"/>
             </Switch>            
         )
         if(this.props.isAdmin){

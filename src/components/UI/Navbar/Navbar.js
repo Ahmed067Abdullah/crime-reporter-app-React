@@ -1,5 +1,5 @@
 import React from "react";
-import {withRouter, NavLink, Link} from 'react-router-dom';
+import {NavLink, Link, withRouter} from 'react-router-dom';
 import './Navbar.css';
 import {connect} from 'react-redux';
 import Aux from '../../../hoc/Auxiliary/Auxiliary';
@@ -12,17 +12,17 @@ class Navbar extends React.Component {
   render() {
     let navConflict = (
       <li className="nav-item">
-        <NavLink className="nav-link nav-text" activeClassName = "active" activeStyle = {{fontWeight : "bold"}} to="/auth">Authenticate</NavLink>
+        <NavLink className="nav-link nav-text" exact to="/auth">Authenticate</NavLink>
       </li>)
 
     if(this.props.isAdmin){
       navConflict = (
         <Aux>
-          <li className="nav-item active">
-            <NavLink className="nav-link nav-text" activeClassName = "active" to="/logout">Logout</NavLink>
+          <li className="nav-item">
+            <NavLink className="nav-link nav-text" exact to="/logout">Logout</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link nav-text" activeClassName = "active" to="/complaints">Complaints</NavLink>
+            <NavLink className="nav-link nav-text" exact  to="/complaints">Complaints</NavLink>
            </li>
         </Aux>)
     }
@@ -42,7 +42,7 @@ class Navbar extends React.Component {
           </div>
         </li>
         <li className="nav-item">
-            <NavLink className="nav-link nav-text" activeClassName = "active" to="/complaints">Complaints</NavLink>
+            <NavLink className="nav-link nav-text" exact to="/complaints">Complaints</NavLink>
         </li>
         </Aux>
       )
@@ -57,10 +57,10 @@ class Navbar extends React.Component {
           <ul className="navbar-nav mr-auto">
             {navConflict}
             <li className="nav-item">
-              <NavLink className="nav-link nav-text" activeClassName = "active" to="/crimes">Crimes</NavLink>
+              <NavLink className="nav-link nav-text" exact to="/crimes">Crimes</NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link nav-text" activeClassName = "active" to="/missingPersons">Missing Persons</NavLink>
+              <NavLink className="nav-link nav-text" exact activeClassName = "active" to="/missingPersons">Missing Persons</NavLink>
             </li>
           </ul>
         </div>
@@ -77,4 +77,4 @@ const mapStateToProps = state => {
     isAdmin : state.auth.isAdmin
   }
 }
-export default connect(mapStateToProps)(Navbar);
+export default withRouter(connect(mapStateToProps)(Navbar));
