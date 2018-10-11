@@ -41,7 +41,6 @@ class Complaints extends Component{
             for(let key in complaintsObj){
                 complaints.push({id : key, ...complaintsObj[key]})
             }
-            console.log(complaints);
             this.props.onSetReports(complaints);
             this.setState({ loading : false });
         });
@@ -53,7 +52,6 @@ class Complaints extends Component{
 
     render(){
         const complaintPage = this.props.location.pathname === '/complaints';
-        console.log(this.props)
         let reports = '';
         if(this.state.city === '' && complaintPage)
             reports = <p className = "search-messsage">Please Select a City to Continue</p>
@@ -68,7 +66,7 @@ class Complaints extends Component{
                 <div className = "reports-container">
                     {this.props.reports.map(report => {
                         return(
-                            <div className = "card-container" key = {report.id}>
+                            <div className = "card-container" key = {report.id} onClick = {this.props.isAdmin ? () => this.props.history.push(`/singleComplaint/${report.id}`) : null}>
                                 <Card>
                                     <strong>Reported By</strong> : {report.reportedBy}<br/>
                                     <strong>Reported At</strong> : {report.reportedAt}<br/>
@@ -110,7 +108,8 @@ const mapStateToProps = state => {
     return{
         reports : state.reports.reports,
         uid : state.auth.uid,
-        isRegistered : state.auth.isRegistered
+        isRegistered : state.auth.isRegistered,
+        isAdmin : state.auth.isAdmin
     }
 }
 

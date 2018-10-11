@@ -48,13 +48,6 @@ class RegisterDonor extends Component{
     }
 
     componentDidMount() {
-        ValidatorForm.addValidationRule('isOldEnough', (value) => {
-            if (value.trim() < 18) {
-                return false;
-            }
-            return true;
-        });
-
         ValidatorForm.addValidationRule('isSmallEnough', (value) => {
             if (value.trim().length >= 256) {
                 return false;
@@ -64,6 +57,13 @@ class RegisterDonor extends Component{
 
         ValidatorForm.addValidationRule('isElevenDigits', (value) => {
             if (value.trim().length < 11 || value.trim().length > 11  ) {
+                return false;
+            }
+            return true;
+        });
+
+        ValidatorForm.addValidationRule('have13Digits', (value) => {
+            if (value.trim().length < 13 || value.trim().length > 13  ) {
                 return false;
             }
             return true;
@@ -99,6 +99,7 @@ class RegisterDonor extends Component{
         })
         .then(res => {
             this.setState({loading : false, error : null});
+            alert("Congratulations! You're Successfully Registered.")
             this.props.onSetRegistered(name);
         })
         .catch(err => {
@@ -132,8 +133,8 @@ class RegisterDonor extends Component{
                         onChange={this.handleChange}
                         name="cnic"
                         value={this.state.cnic}
-                        validators={['required','isElevenDigits']}
-                        errorMessages={['This field is required', 'CNIC must have 11 digits']}/><br/>
+                        validators={['required','have13Digits']}
+                        errorMessages={['This field is required', 'CNIC must have 13 digits']}/><br/>
 
                     <TextValidator
                         className = {this.props.classes.TextFields}

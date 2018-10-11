@@ -5,3 +5,7 @@
 .nav-text{
     color : white !important; 
 }
+
+.active{
+    font-weight: bold;
+}

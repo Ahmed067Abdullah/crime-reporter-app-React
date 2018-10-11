@@ -20,6 +20,16 @@
     margin-top : 20px;
 }
 
+.singles-card{
+    margin: 50px auto 10px;
+    width: 90%;
+    text-align: left;
+}
+
+.singles-card .button{
+    text-align: center
+}
+
 @media (min-width : 500px) {
     .card-container{
         width: 30%;
@@ -29,6 +39,9 @@
         height: 260px;
         overflow:auto;
         overflow-x: hidden;
+    }
+    .singles-card{
+        width: 30%;
     }      
     .missing-persons-card{
         height: 300px;

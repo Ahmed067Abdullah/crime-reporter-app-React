@@ -48,7 +48,7 @@ class MissingPersons extends Component{
     clickedHandler = () => {
         this.props.history.push("/reportMissingPerson")
     }
-    
+
     render(){
         const missingPersonsPage = this.props.location.pathname === '/missingPersons';
         let reports = '';
@@ -65,7 +65,7 @@ class MissingPersons extends Component{
                 <div className = "reports-container">
                     {this.props.reports.map(report => {
                         return(
-                            <div className = "card-container missing-persons-card" key = {report.id}>
+                            <div className = "card-container missing-persons-card" key = {report.id} onClick = {this.props.isAdmin ? () => this.props.history.push(`/singleMissingPerson/${report.id}`) : null}>
                                 <Card>
                                     <strong>Reported By</strong> : {report.reportedBy}<br/>
                                     <strong>Reported At</strong> : {report.reportedAt}<br/>
@@ -109,7 +109,8 @@ const mapStateToProps = state => {
     return{
         reports : state.reports.reports,
         uid : state.auth.uid,
-        isRegistered : state.auth.isRegistered
+        isRegistered : state.auth.isRegistered,
+        isAdmin : state.auth.isAdmin
     }
 }
 

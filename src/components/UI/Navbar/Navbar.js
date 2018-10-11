@@ -10,20 +10,19 @@ class Navbar extends React.Component {
   };
 
   render() {
-    console.log(this.props.isRegistered)
     let navConflict = (
-      <li className="nav-item active">
-        <NavLink className="nav-link nav-text" to="/auth">Authenticate</NavLink>
+      <li className="nav-item">
+        <NavLink className="nav-link nav-text" activeClassName = "active" activeStyle = {{fontWeight : "bold"}} to="/auth">Authenticate</NavLink>
       </li>)
 
     if(this.props.isAdmin){
       navConflict = (
         <Aux>
           <li className="nav-item active">
-            <NavLink className="nav-link nav-text" to="/logout">Logout</NavLink>
+            <NavLink className="nav-link nav-text" activeClassName = "active" to="/logout">Logout</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link nav-text"to="/complaints">Complaints</NavLink>
+            <NavLink className="nav-link nav-text" activeClassName = "active" to="/complaints">Complaints</NavLink>
            </li>
         </Aux>)
     }
@@ -43,7 +42,7 @@ class Navbar extends React.Component {
           </div>
         </li>
         <li className="nav-item">
-            <NavLink className="nav-link nav-text"to="/complaints">Complaints</NavLink>
+            <NavLink className="nav-link nav-text" activeClassName = "active" to="/complaints">Complaints</NavLink>
         </li>
         </Aux>
       )
@@ -58,10 +57,10 @@ class Navbar extends React.Component {
           <ul className="navbar-nav mr-auto">
             {navConflict}
             <li className="nav-item">
-              <NavLink className="nav-link nav-text" to="/crimes">Crimes</NavLink>
+              <NavLink className="nav-link nav-text" activeClassName = "active" to="/crimes">Crimes</NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link nav-text" to="/missingPersons">Missing Persons</NavLink>
+              <NavLink className="nav-link nav-text" activeClassName = "active" to="/missingPersons">Missing Persons</NavLink>
             </li>
           </ul>
         </div>

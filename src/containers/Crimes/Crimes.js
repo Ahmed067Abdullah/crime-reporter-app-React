@@ -51,7 +51,6 @@ class Crimes extends Component{
 
     render(){
         const crimesPage = this.props.location.pathname === '/crimes';
-        console.log(this.props)
         let reports = '';
         if(this.state.city === '' && crimesPage)
             reports = <p className = "search-messsage">Please Select a City to Continue</p>
@@ -67,7 +66,7 @@ class Crimes extends Component{
                 <div className = "reports-container">
                     {this.props.reports.map(report => {
                         return(
-                            <div className = "card-container" key = {report.id}>
+                            <div className = "card-container" key = {report.id} onClick = {this.props.isAdmin ? () => this.props.history.push(`/singleCrime/${report.id}`) : null}>
                                 <Card>
                                     <strong>Reported By</strong> : {report.reportedBy}<br/>
                                     <strong>Reported At</strong> : {report.reportedAt}<br/>
@@ -108,7 +107,8 @@ const mapStateToProps = state => {
     return{
         reports : state.reports.reports,
         uid : state.auth.uid,
-        isRegistered : state.auth.isRegistered
+        isRegistered : state.auth.isRegistered,
+        isAdmin : state.auth.isAdmin
     }
 }
 
