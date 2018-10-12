@@ -16,21 +16,6 @@ class Crimes extends Component{
         loading : false
     }
 
-    componentDidMount(){
-        if(this.props.location.pathname === '/myCrimes'){
-            this.setState({ loading : true });
-            firebase.database().ref('/crimes').orderByChild('reporterId').equalTo(`${this.props.uid}`).on('value' , snapshot => {
-                const complaintsObj = snapshot.val();
-                let complaints = [];
-                for(let key in complaintsObj){
-                    complaints.push({id : key, ...complaintsObj[key]})
-                }
-                this.props.onSetReports(complaints);
-                this.setState({ loading : false });
-            }); 
-        }
-    }
-
     handleChange = (event) => {
         const city = event.target.value;
         this.setState({ [event.target.name] : city, loading : true });
@@ -50,26 +35,23 @@ class Crimes extends Component{
     }
 
     render(){
-        const crimesPage = this.props.location.pathname === '/crimes';
         let reports = '';
-        if(this.state.city === '' && crimesPage)
+        if(this.state.city === '')
             reports = <p className = "search-messsage">Please Select a City to Continue</p>
         else if(this.props.reports.length <= 0){
-            let msg = "You Haven't Reported Any Crime Reports Yet"
-            if(crimesPage)
-                msg = "No Crime Reports Found For The Selected City";
-            reports = <p className = "search-messsage">{msg}</p>
+            reports = <p className = "search-messsage">No Crime Reports Found For The Selected City</p>
         }    
-
         else{
             reports = (
                 <div className = "reports-container">
                     {this.props.reports.map(report => {
+                        let reportedAt = new Date(report.reportedAt).toString();
+                        reportedAt = reportedAt.slice(0,reportedAt.length - 34);
                         return(
                             <div className = "card-container" key = {report.id} onClick = {this.props.isAdmin ? () => this.props.history.push(`/singleCrime/${report.id}`) : null}>
                                 <Card>
                                     <strong>Reported By</strong> : {report.reportedBy}<br/>
-                                    <strong>Reported At</strong> : {report.reportedAt}<br/>
+                                    <strong>Reported At</strong> : {reportedAt}<br/>
                                     <strong>Type</strong> : {report.type}<br/>
                                     <strong>Description</strong> : {report.description}<br/>
                                     <strong>When</strong> : {report.time}<br/>
@@ -92,7 +74,7 @@ class Crimes extends Component{
                             onClick = {this.clickedHandler}
                             disabled = {!this.props.isRegistered}>Report New Crime</button>
                         <Reports
-                            showCities = {crimesPage}
+                            showCities = {true}
                             handleChange = {this.handleChange}
                             city = {this.state.city}
                             reports = {reports}/>

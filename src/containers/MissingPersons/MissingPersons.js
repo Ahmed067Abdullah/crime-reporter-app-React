@@ -16,21 +16,6 @@ class MissingPersons extends Component{
         loading : false
     }
 
-    componentDidMount(){
-        if(this.props.location.pathname === '/myMissingPersons'){
-            this.setState({ loading : true });
-            firebase.database().ref('/missingPersons').orderByChild('reporterId').equalTo(`${this.props.uid}`).on('value' , snapshot => {
-                const complaintsObj = snapshot.val();
-                let complaints = [];
-                for(let key in complaintsObj){
-                    complaints.push({id : key, ...complaintsObj[key]})
-                }
-                this.props.onSetReports(complaints);
-                this.setState({ loading : false });
-            }); 
-        }
-    }
-
     handleChange = (event) => {
         const city = event.target.value;
         this.setState({ [event.target.name] : city, loading : true });
@@ -50,25 +35,23 @@ class MissingPersons extends Component{
     }
 
     render(){
-        const missingPersonsPage = this.props.location.pathname === '/missingPersons';
         let reports = '';
-        if(this.state.city === '' && missingPersonsPage)
+        if(this.state.city === '')
             reports = <p className = "search-messsage">Please Select a City to Continue</p>
         else if(this.props.reports.length <= 0){
-            let msg = "You Haven't Reported Any Missing Persons Yet"
-            if(missingPersonsPage)
-                msg = "No Missing Persons Reports Found For The Selected City"
-            reports = <p className = "search-messsage">{msg}</p>
+            reports = <p className = "search-messsage">No Missing Persons Reports Found For The Selected City</p>
         }    
         else{
             reports = (
                 <div className = "reports-container">
                     {this.props.reports.map(report => {
+                        let reportedAt = new Date(report.reportedAt).toString();
+                        reportedAt = reportedAt.slice(0,reportedAt.length - 34);
                         return(
                             <div className = "card-container missing-persons-card" key = {report.id} onClick = {this.props.isAdmin ? () => this.props.history.push(`/singleMissingPerson/${report.id}`) : null}>
                                 <Card>
                                     <strong>Reported By</strong> : {report.reportedBy}<br/>
-                                    <strong>Reported At</strong> : {report.reportedAt}<br/>
+                                    <strong>Reported At</strong> : {reportedAt}<br/>
                                     <strong>Name</strong> : {report.name}<br/>
                                     <strong>Age</strong> : {report.age}<br/>
                                     <strong>Appearance</strong> : {report.appearance}<br/>
@@ -94,7 +77,7 @@ class MissingPersons extends Component{
                             onClick = {this.clickedHandler}
                             disabled = {!this.props.isRegistered}>Report Missing Person</button>
                         <Reports
-                            showCities = {missingPersonsPage}
+                            showCities = {true}
                             handleChange = {this.handleChange}
                             city = {this.state.city}
                             reports = {reports}/>

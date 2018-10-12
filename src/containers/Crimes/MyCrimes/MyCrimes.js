@@ -3,24 +3,21 @@ import {withRouter} from 'react-router-dom';
 import * as firebase from 'firebase';
 import {connect} from 'react-redux';
 
-import '../../Utils/Utility.css';
-import Reports from '../../components/Reports/Reports';
-import * as actions from '../../store/actions/index';
-import Card from '../../hoc/Card/Card';
-import Spinner from './../../components/UI/Spinner/Spinner';
-import Aux from '../../hoc/Auxiliary/Auxiliary';
+import '../../../Utils/Utility.css';
+import Reports from '../../../components/Reports/Reports';
+import * as actions from '../../../store/actions/index';
+import Card from '../../../hoc/Card/Card';
+import Spinner from '../../../components/UI/Spinner/Spinner';
+import Aux from '../../../hoc/Auxiliary/Auxiliary';
 
-class Complaints extends Component{
+class Crimes extends Component{
     state = {
-        city : '',
         loading : false
     }
 
-    handleChange = (event) => {
-        const city = event.target.value;
-        this.setState({ [event.target.name] : city, loading : true });
-        firebase.database().ref('/complaints').orderByChild('city').equalTo(`${city}`).on('value' , snapshot => {
-            console.log(snapshot.val());
+    componentDidMount(){
+        this.setState({ loading : true });
+        firebase.database().ref('/crimes').orderByChild('reporterId').equalTo(`${this.props.uid}`).on('value' , snapshot => {
             const complaintsObj = snapshot.val();
             let complaints = [];
             for(let key in complaintsObj){
@@ -28,32 +25,29 @@ class Complaints extends Component{
             }
             this.props.onSetReports(complaints);
             this.setState({ loading : false });
-        });
+        }); 
     }
 
     clickedHandler = () => {
-        this.props.history.push("/reportComplaint")
+        this.props.history.push("/reportCrime")
     }
 
     render(){
         let reports = '';
-        if(this.state.city === '')
-            reports = <p className = "search-messsage">Please Select a City to Continue</p>
-        else if(this.props.reports.length <= 0){
-            reports = <p className = "search-messsage">No Complaints Found For The Selected City</p>
+        if(this.props.reports.length <= 0){
+            reports = <p className = "search-messsage">You Haven't Reported Any Crime Reports Yet</p>
         }    
         else{
             reports = (
                 <div className = "reports-container">
                     {this.props.reports.map(report => {
                         let reportedAt = new Date(report.reportedAt).toString();
-                        reportedAt = reportedAt.slice(0,reportedAt.length - 34);
+                        reportedAt = reportedAt.slice(0,reportedAt.length - 34);                        
                         return(
-                            <div className = "card-container" key = {report.id} onClick = {this.props.isAdmin ? () => this.props.history.push(`/singleComplaint/${report.id}`) : null}>
+                            <div className = "card-container" key = {report.id} onClick = {this.props.isAdmin ? () => this.props.history.push(`/singleCrime/${report.id}`) : null}>
                                 <Card>
                                     <strong>Reported By</strong> : {report.reportedBy}<br/>
                                     <strong>Reported At</strong> : {reportedAt}<br/>
-                                    <strong>Against</strong> : {report.against}<br/>
                                     <strong>Type</strong> : {report.type}<br/>
                                     <strong>Description</strong> : {report.description}<br/>
                                     <strong>When</strong> : {report.time}<br/>
@@ -72,13 +66,11 @@ class Complaints extends Component{
                 {!this.state.loading ?  
                     <Aux>
                         <button 
-                            className = "btn btn-info my-reports-button" 
-                            disabled = {!this.props.isRegistered}
-                            onClick = {this.clickedHandler}>Report New Complaint</button>
+                            className = {"btn btn-info my-reports-button"} 
+                            onClick = {this.clickedHandler}
+                            disabled = {!this.props.isRegistered}>Report New Crime</button>
                         <Reports
-                            showCities = {true}
-                            handleChange = {this.handleChange}
-                            city = {this.state.city}
+                            showCities = {false}
                             reports = {reports}/>
                     </Aux> :  <div  className = "spinner"><Spinner/></div>
                 }
@@ -102,4 +94,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default withRouter(connect(mapStateToProps,mapDispatchToProps)(Complaints));
+export default withRouter(connect(mapStateToProps,mapDispatchToProps)(Crimes));

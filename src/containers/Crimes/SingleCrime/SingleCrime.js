@@ -64,28 +64,21 @@ class SingleCrime extends Component{
     }
 
     clickedHandler = () => {
-        console.log(this.state.updatedStatus);
-        firebase.database().ref(`crimes/${this.state.id}`).set({
-            city: this.state.city,
-            area : this.state.area,
-            type : this.state.type,
-            time : this.state.time,
-            description : this.state.description,
-            reportedBy : this.state.reportedBy,
-            reportedAt : this.state.reportedAt,
-            reporterId : this.state.reporterId,
-            status : this.state.updatedStatus,
-        })
+        const status = {}
+        status[`crimes/${this.state.id}/status`] = this.state.updatedStatus;
+        firebase.database().ref().update(status);
     }
 
     render(){
+        let reportedAt = new Date(this.state.reportedAt).toString();
+        reportedAt = reportedAt.slice(0,reportedAt.length - 34);     
         return(
             <div className = {this.props.classes.Main}>
                 {this.state.city ? 
                 <div className = "singles-card">
                     <Card>
                         <strong>Reported By</strong> : {this.state.reportedBy}<br/>
-                        <strong>Reported At</strong> : {this.state.reportedAt}<br/>
+                        <strong>Reported At</strong> : {reportedAt}<br/>
                         <strong>Type</strong> : {this.state.type}<br/>
                         <strong>Description</strong> : {this.state.description}<br/>
                         <strong>When</strong> : {this.state.time}<br/>

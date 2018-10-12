@@ -3,32 +3,31 @@ import {withRouter} from 'react-router-dom';
 import * as firebase from 'firebase';
 import {connect} from 'react-redux';
 
-import '../../Utils/Utility.css';
-import Reports from '../../components/Reports/Reports';
-import * as actions from '../../store/actions/index';
-import Card from '../../hoc/Card/Card';
-import Spinner from './../../components/UI/Spinner/Spinner';
-import Aux from '../../hoc/Auxiliary/Auxiliary';
+import '../../../Utils/Utility.css';
+import Reports from '../../../components/Reports/Reports';
+import * as actions from '../../../store/actions/index';
+import Card from '../../../hoc/Card/Card';
+import Spinner from '../../../components/UI/Spinner/Spinner';
+import Aux from '../../../hoc/Auxiliary/Auxiliary';
 
 class Complaints extends Component{
     state = {
-        city : '',
         loading : false
     }
 
-    handleChange = (event) => {
-        const city = event.target.value;
-        this.setState({ [event.target.name] : city, loading : true });
-        firebase.database().ref('/complaints').orderByChild('city').equalTo(`${city}`).on('value' , snapshot => {
-            console.log(snapshot.val());
-            const complaintsObj = snapshot.val();
-            let complaints = [];
-            for(let key in complaintsObj){
-                complaints.push({id : key, ...complaintsObj[key]})
-            }
-            this.props.onSetReports(complaints);
-            this.setState({ loading : false });
-        });
+    componentDidMount(){
+        if(this.props.location.pathname === '/myComplaints'){
+            this.setState({ loading : true });
+            firebase.database().ref('/complaints').orderByChild('reporterId').equalTo(`${this.props.uid}`).on('value' , snapshot => {
+                const complaintsObj = snapshot.val();
+                let complaints = [];
+                for(let key in complaintsObj){
+                    complaints.push({id : key, ...complaintsObj[key]})
+                }
+                this.props.onSetReports(complaints);
+                this.setState({ loading : false });
+            }); 
+        }
     }
 
     clickedHandler = () => {
@@ -37,17 +36,15 @@ class Complaints extends Component{
 
     render(){
         let reports = '';
-        if(this.state.city === '')
-            reports = <p className = "search-messsage">Please Select a City to Continue</p>
-        else if(this.props.reports.length <= 0){
-            reports = <p className = "search-messsage">No Complaints Found For The Selected City</p>
+        if(this.props.reports.length <= 0){
+            reports = <p className = "search-messsage">You Haven't Reported Any Complaints Yet</p>
         }    
         else{
             reports = (
                 <div className = "reports-container">
                     {this.props.reports.map(report => {
                         let reportedAt = new Date(report.reportedAt).toString();
-                        reportedAt = reportedAt.slice(0,reportedAt.length - 34);
+                        reportedAt = reportedAt.slice(0,reportedAt.length - 34);                        
                         return(
                             <div className = "card-container" key = {report.id} onClick = {this.props.isAdmin ? () => this.props.history.push(`/singleComplaint/${report.id}`) : null}>
                                 <Card>
@@ -76,9 +73,7 @@ class Complaints extends Component{
                             disabled = {!this.props.isRegistered}
                             onClick = {this.clickedHandler}>Report New Complaint</button>
                         <Reports
-                            showCities = {true}
-                            handleChange = {this.handleChange}
-                            city = {this.state.city}
+                            showCities = {false}
                             reports = {reports}/>
                     </Aux> :  <div  className = "spinner"><Spinner/></div>
                 }
