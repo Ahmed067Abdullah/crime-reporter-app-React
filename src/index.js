@@ -6,8 +6,8 @@ import {Provider} from 'react-redux';
 
 import authReducers from './store/reducers/auth';
 import reportReducers from './store/reducers/reports';
-import './index.css';
 import App from './App';
+import './index.css';
 
   // Initialize Firebase
   const config = {

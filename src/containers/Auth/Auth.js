@@ -1,13 +1,16 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux';
+import * as firebase from 'firebase'
+
+// Material UI imports start
 import Button from '@material-ui/core/Button';
 import { withStyles } from "@material-ui/core/styles";
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
-import { connect } from 'react-redux';
-import * as actions from '../../store/actions/index';
-import * as firebase from 'firebase'
+// Material UI imports end
 
-import Card from '../../hoc/Card/Card';
+import * as actions from '../../store/actions/index';
 import Spinner from '../../components/UI/Spinner/Spinner';
+import Card from '../../hoc/Card/Card';
 import './Auth.css';
 
 const styles = theme => {
@@ -58,7 +61,7 @@ class Auth extends Component{
                 const uid = res.user.uid;
                 this.setState({loading : false});
                 this.props.onLogin(uid);
-                this.props.history.replace("/crimes");
+                this.props.history.replace("/register");
             })
             .catch(error => {
                 this.setState({loading : false});
@@ -87,7 +90,7 @@ class Auth extends Component{
                         this.props.onLogin(uid);
                         if(res.val())
                             this.props.onSetRegistered(res.val().name);
-                        this.props.history.replace("/crimes");
+                        this.props.history.replace("/register");
                     })
                     .catch(err => {
                         this.setState({error :err, loading : false})

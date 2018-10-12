@@ -1,20 +1,23 @@
 import React, {Component} from 'react';
 import * as firebase from 'firebase';
+
 import Card from '../../../hoc/Card/Card';
+
+// MUI imports start
 import Button from '@material-ui/core/Button';
 import { withStyles } from "@material-ui/core/styles";
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+// MUI imports start
 
 const styles = theme => {
     return {
         button: {
             backgroundColor : "#374F6B",
             color : "white",
-            margin : "0px auto",
-            marginLeft : "41%"
+            margin : "0px auto"
         },
         formControl: {
             margin : "20px auto",
@@ -40,7 +43,8 @@ class SingleMissingPerson extends Component{
         reporterId : '',
         status : '',
         updatedStatus : '',
-        id : ''
+        id : '',
+        imgURL : ''
     }
 
     componentDidMount() {
@@ -57,6 +61,7 @@ class SingleMissingPerson extends Component{
                 reportedAt : snapshot.val().reportedAt,
                 reporterId : snapshot.val().reporterId,
                 status : snapshot.val().status,
+                imgURL : snapshot.val().imgURL,
                 updatedStatus : snapshot.val().status,
                 id : this.props.match.params.id
             })
@@ -78,18 +83,21 @@ class SingleMissingPerson extends Component{
         reportedAt = reportedAt.slice(0,reportedAt.length - 34);     
         return(
             <div className = {this.props.classes.Main}>
-                {this.state.city ? 
+                {this.state.city ?  
                 <div className = "singles-card">
                     <Card>
-                        <strong>Reported By</strong> : {this.state.reportedBy}<br/>
-                        <strong>Reported At</strong> : {reportedAt}<br/>
-                        <strong>Age</strong> : {this.state.against}<br/>
-                        <strong>Appearance</strong> : {this.state.appearance}<br/>
-                        <strong>Mental Condition</strong> : {this.state.condition}<br/>
-                        <strong>Last Known Location</strong> : {this.state.location}<br/>
-                        <strong>When</strong> : {this.state.time}<br/>
-                        <strong>City</strong> : {this.state.city}<br/>
-                        <strong>Status</strong> : {this.state.status}<br/>
+                        <img src = {this.state.imgURL} className = "card-image" alt = "img"/>
+                        <div className = "card-text">
+                            <strong>Reported By</strong> : {this.state.reportedBy}<br/>
+                            <strong>Reported At</strong> : {reportedAt}<br/>
+                            <strong>Age</strong> : {this.state.against}<br/>
+                            <strong>Appearance</strong> : {this.state.appearance}<br/>
+                            <strong>Mental Condition</strong> : {this.state.condition}<br/>
+                            <strong>Last Known Location</strong> : {this.state.location}<br/>
+                            <strong>When</strong> : {this.state.time}<br/>
+                            <strong>City</strong> : {this.state.city}<br/>
+                            <strong>Status</strong> : {this.state.status}<br/>
+                        </div>
                     </Card>
                     <FormControl className={this.props.classes.formControl}>
                         <InputLabel htmlFor="bg">Update Status</InputLabel>
@@ -106,9 +114,13 @@ class SingleMissingPerson extends Component{
                             <MenuItem value={"Canceled"}>Canceled</MenuItem>
                         </Select>
                     </FormControl><br/>
-                    <Button type="submit" variant="contained" className={this.props.classes.button} onClick = {this.clickedHandler}>Save</Button>
+                    <Button 
+                        type="submit" 
+                        variant="contained" 
+                        className={this.props.classes.button} 
+                        onClick = {this.clickedHandler}>Save</Button>
                 </div>
-                 : null
+                : null
             } 
             </div>
         )

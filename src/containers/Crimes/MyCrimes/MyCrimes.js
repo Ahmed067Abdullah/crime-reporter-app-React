@@ -3,12 +3,12 @@ import {withRouter} from 'react-router-dom';
 import * as firebase from 'firebase';
 import {connect} from 'react-redux';
 
-import '../../../Utils/Utility.css';
 import Reports from '../../../components/Reports/Reports';
 import * as actions from '../../../store/actions/index';
 import Card from '../../../hoc/Card/Card';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Aux from '../../../hoc/Auxiliary/Auxiliary';
+import '../../../Utils/Utility.css';
 
 class Crimes extends Component{
     state = {
@@ -17,15 +17,19 @@ class Crimes extends Component{
 
     componentDidMount(){
         this.setState({ loading : true });
-        firebase.database().ref('/crimes').orderByChild('reporterId').equalTo(`${this.props.uid}`).on('value' , snapshot => {
-            const complaintsObj = snapshot.val();
-            let complaints = [];
-            for(let key in complaintsObj){
-                complaints.push({id : key, ...complaintsObj[key]})
-            }
-            this.props.onSetReports(complaints);
-            this.setState({ loading : false });
-        }); 
+        firebase.database()
+            .ref('/crimes')
+            .orderByChild('reporterId')
+            .equalTo(`${this.props.uid}`)
+            .on('value' , snapshot => {
+                const complaintsObj = snapshot.val();
+                let complaints = [];
+                for(let key in complaintsObj){
+                    complaints.push({id : key, ...complaintsObj[key]})
+                }
+                this.props.onSetReports(complaints);
+                this.setState({ loading : false });
+            }); 
     }
 
     clickedHandler = () => {
@@ -44,16 +48,24 @@ class Crimes extends Component{
                         let reportedAt = new Date(report.reportedAt).toString();
                         reportedAt = reportedAt.slice(0,reportedAt.length - 34);                        
                         return(
-                            <div className = "card-container" key = {report.id} onClick = {this.props.isAdmin ? () => this.props.history.push(`/singleCrime/${report.id}`) : null}>
+                            <div 
+                                className = "card-container" 
+                                key = {report.id} 
+                                onClick = {this.props.isAdmin ? 
+                                            () => this.props.history.push(`/singleCrime/${report.id}`) : 
+                                            null}>
                                 <Card>
-                                    <strong>Reported By</strong> : {report.reportedBy}<br/>
-                                    <strong>Reported At</strong> : {reportedAt}<br/>
-                                    <strong>Type</strong> : {report.type}<br/>
-                                    <strong>Description</strong> : {report.description}<br/>
-                                    <strong>When</strong> : {report.time}<br/>
-                                    <strong>Area</strong> : {report.area}<br/>  
-                                    <strong>City</strong> : {report.city}<br/>
-                                    <strong>Status</strong> : {report.status}<br/>
+                                    <img src = {report.imgURL} className = "card-image" alt = "img"/>
+                                    <div className = "card-text">
+                                        <strong>Reported By</strong> : {report.reportedBy}<br/>
+                                        <strong>Reported At</strong> : {reportedAt}<br/>
+                                        <strong>Type</strong> : {report.type}<br/>
+                                        <strong>Description</strong> : {report.description}<br/>
+                                        <strong>When</strong> : {report.time}<br/>
+                                        <strong>Area</strong> : {report.area}<br/>  
+                                        <strong>City</strong> : {report.city}<br/>
+                                        <strong>Status</strong> : {report.status}<br/>
+                                    </div>    
                                 </Card>
                             </div> 
                         )   

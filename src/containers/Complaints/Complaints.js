@@ -3,12 +3,12 @@ import {withRouter} from 'react-router-dom';
 import * as firebase from 'firebase';
 import {connect} from 'react-redux';
 
-import '../../Utils/Utility.css';
 import Reports from '../../components/Reports/Reports';
 import * as actions from '../../store/actions/index';
 import Card from '../../hoc/Card/Card';
 import Spinner from './../../components/UI/Spinner/Spinner';
 import Aux from '../../hoc/Auxiliary/Auxiliary';
+import '../../Utils/Utility.css';
 
 class Complaints extends Component{
     state = {
@@ -49,17 +49,22 @@ class Complaints extends Component{
                         let reportedAt = new Date(report.reportedAt).toString();
                         reportedAt = reportedAt.slice(0,reportedAt.length - 34);
                         return(
-                            <div className = "card-container" key = {report.id} onClick = {this.props.isAdmin ? () => this.props.history.push(`/singleComplaint/${report.id}`) : null}>
+                            <div 
+                                className = "card-container complaints-card" 
+                                key = {report.id} 
+                                onClick = {this.props.isAdmin ? () => this.props.history.push(`/singleComplaint/${report.id}`) : null}>
                                 <Card>
-                                    <strong>Reported By</strong> : {report.reportedBy}<br/>
-                                    <strong>Reported At</strong> : {reportedAt}<br/>
-                                    <strong>Against</strong> : {report.against}<br/>
-                                    <strong>Type</strong> : {report.type}<br/>
-                                    <strong>Description</strong> : {report.description}<br/>
-                                    <strong>When</strong> : {report.time}<br/>
-                                    <strong>Area</strong> : {report.area}<br/>  
-                                    <strong>City</strong> : {report.city}<br/>
-                                    <strong>Status</strong> : {report.status}<br/>
+                                    <div className = "card-text">
+                                        <strong>Reported By</strong> : {report.reportedBy}<br/>
+                                        <strong>Reported At</strong> : {reportedAt}<br/>
+                                        <strong>Against</strong> : {report.against}<br/>
+                                        <strong>Type</strong> : {report.type}<br/>
+                                        <strong>Description</strong> : {report.description}<br/>
+                                        <strong>When</strong> : {report.time}<br/>
+                                        <strong>Area</strong> : {report.area}<br/>  
+                                        <strong>City</strong> : {report.city}<br/>
+                                        <strong>Status</strong> : {report.status}<br/>
+                                    </div>    
                                 </Card>
                             </div> 
                         )   

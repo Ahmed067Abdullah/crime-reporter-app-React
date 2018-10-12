@@ -1,4 +1,13 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux';
+import * as firebase from 'firebase'
+
+import * as actions from '../../../store/actions/index';
+import Card from '../../../hoc/Card/Card';
+import Spinner from '../../../components/UI/Spinner/Spinner';
+import './ReportCrime.css';
+
+// MUI imports start
 import Button from '@material-ui/core/Button';
 import { withStyles } from "@material-ui/core/styles";
 import InputLabel from '@material-ui/core/InputLabel';
@@ -6,13 +15,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
-import { connect } from 'react-redux';
-import * as actions from '../../../store/actions/index';
-import * as firebase from 'firebase'
-
-import Card from '../../../hoc/Card/Card';
-import Spinner from '../../../components/UI/Spinner/Spinner';
-import './ReportCrime.css';
+// MUI imports end
 
 const styles = theme => {
     return {
@@ -43,7 +46,8 @@ class ReportCrime extends Component{
         time : '',
         description : '',
         error : '',
-        loading : false
+        loading : false,
+        image : null
     }
  
     componentDidMount() {
@@ -59,37 +63,76 @@ class ReportCrime extends Component{
         this.setState({ [event.target.name] : event.target.value });
     }
 
+    fileChangedHandler = (event) => {
+        if(event.target.files[0]){
+            this.setState({image : event.target.files[0]})
+        }
+    }
+
     handleSubmit = () => {
-        this.setState({loading : true});
-        const database = firebase.database();
-        const {city,area,type,time,description} = this.state;
-        const date = new Date().getTime();
-        database.ref('crimes/').push({
-            city,
-            area,
-            type,
-            time,
-            description,
-            reportedAt : date,
-            reportedBy : this.props.uname,
-            reporterId : this.props.uid,
-            status : "Pending"
-        })
-        .then(res => {
-            this.setState({
-                loading : false,
-                error : null,
-                city: 'karachi',
-                area : '',
-                type : '',
-                time : '',
-                description : ''
-            });
-            alert("Report Submitted Successfully");
-        })
-        .catch(err => {
-            this.setState({loading : false, error : err});
-        })
+        const {image} = this.state
+        if(!image || (image && (image.type === 'image/jpeg' || image.type === 'image/png'))){
+            this.setState({loading : true});
+            const database = firebase.database();
+            const {city,area,type,time,description} = this.state;
+            const date = new Date().getTime();
+            database.ref('crimes/').push({
+                city,
+                area,
+                type,
+                time,
+                description,
+                reportedAt : date,
+                reportedBy : this.props.uname,
+                reporterId : this.props.uid,
+                status : "Pending",
+                imgURL : 'http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg'
+            })
+            .then(res => {
+                if(image){
+                    const id = res.path.pieces_[1];
+                    let imgUpload = firebase.storage().ref(`crimeImages/${id}`).put(image);
+                    
+                    imgUpload.on('state_changed', 
+                        (snapshot) => {
+                        
+                        },(err) => {
+                            this.setState({loading : false, error : err});
+                        },() => {
+                            imgUpload.snapshot.ref.getDownloadURL()
+                                .then(downloadURL => {
+                                    const updateObj = {};
+                                    updateObj[`crimes/${id}/imgURL`] = downloadURL;
+                                    firebase.database().ref().update(updateObj)                            
+                            })
+                           this.submitCompleted();
+                        })
+                }
+                else{
+                    this.submitCompleted();
+                }
+            })
+            .catch(err => {
+                this.setState({loading : false, error : err});
+            })
+        }
+        else{
+            alert("Only JPEG, JPG and PNG formats are allowed")
+        }
+    }
+
+    submitCompleted = () => {
+        this.setState({
+            loading : false,
+            error : null,
+            city: 'karachi',
+            area : '',
+            type : '',
+            time : '',
+            description : '',
+            image : null
+        });
+        alert("Report Submitted Successfully");   
     }
 
 
@@ -125,8 +168,7 @@ class ReportCrime extends Component{
                     <ValidatorForm
                         ref="form"
                         onSubmit={this.handleSubmit}
-                        onError={errors => console.log(errors)}
-                    >
+                        onError={errors => console.log(errors)}>
                         <TextValidator
                             className = {this.props.classes.TextFields}
                             label="Area"
@@ -163,10 +205,11 @@ class ReportCrime extends Component{
                             validators={['required', 'isSmallEnough']}
                             errorMessages={['This field is required', 'Only 256 Characters are allowed']}
                         /><br/>
-                        <label>Picture (If any) <input type = "file" className = {this.props.classes.file}/></label><br/>
-                        <Button type="submit" variant="contained" className="button">
-                            Post
-                        </Button>
+                        <label>Picture (If any) <input type = "file" className = {this.props.classes.file} onChange = {this.fileChangedHandler}/></label><br/>
+                        <Button 
+                            type="submit" 
+                            variant="contained" 
+                            className="button">Post</Button>
                     </ValidatorForm>
                 </Card> : <div  className = "auth-spinner"><Spinner/></div>}           
             </div>

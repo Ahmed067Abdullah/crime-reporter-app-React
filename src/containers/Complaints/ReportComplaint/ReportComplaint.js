@@ -1,4 +1,13 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux';
+import * as firebase from 'firebase';
+
+import * as actions from '../../../store/actions/index';
+import Card from '../../../hoc/Card/Card';
+import Spinner from '../../../components/UI/Spinner/Spinner';
+import './ReportComplaint.css';
+
+// MUI imports start
 import Button from '@material-ui/core/Button';
 import { withStyles } from "@material-ui/core/styles";
 import InputLabel from '@material-ui/core/InputLabel';
@@ -6,13 +15,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
-import { connect } from 'react-redux';
-import * as actions from '../../../store/actions/index';
-import * as firebase from 'firebase';
-
-import Card from '../../../hoc/Card/Card';
-import Spinner from '../../../components/UI/Spinner/Spinner';
-import './ReportComplaint.css';
+// MUI imports end
 
 const styles = theme => {
     return {
@@ -94,9 +97,9 @@ class ReportComplaint extends Component{
 
     render(){
         return(
-     <div  className = "Main">
-            <p className="h2 heading font-weight-bold">Report Complaint</p>
-            {!this.state.loading ?
+            <div  className = "Main">
+                <p className="h2 heading font-weight-bold">Report Complaint</p>
+                {!this.state.loading ?
                 <Card>
                     <p className = "Error">{this.state.error ? this.state.error  : null}</p>
                     <FormControl className={this.props.classes.formControl}>
@@ -123,8 +126,7 @@ class ReportComplaint extends Component{
                     <ValidatorForm
                         ref="form"
                         onSubmit={this.handleSubmit}
-                        onError={errors => console.log(errors)}
-                    >
+                        onError={errors => console.log(errors)}>
                         <TextValidator
                             className = {this.props.classes.TextFields}
                             label="Area"
@@ -170,9 +172,11 @@ class ReportComplaint extends Component{
                             validators={['required', 'isSmallEnough']}
                             errorMessages={['This field is required', 'Only 256 Characters are allowed']}
                         /><br/>
-                        <Button type="submit" variant="contained" color="secondary" className = "button">
-                            Post
-                        </Button>
+                        <Button 
+                            type="submit" 
+                            variant="contained" 
+                            color="secondary" 
+                            className = "button">Post</Button>
                     </ValidatorForm>
                 </Card> : <div  className = "auth-spinner"><Spinner/></div>}           
             </div>

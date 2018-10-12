@@ -9,6 +9,9 @@
 .card-container{
     margin: 0px auto 10px;
     width: 90%;
+}
+
+.card-text{
     text-align: left;
 }
 
@@ -23,11 +26,26 @@
 .singles-card{
     margin: 50px auto 10px;
     width: 90%;
-    text-align: left;
 }
 
 .singles-card .button{
-    text-align: center
+    text-align: center;
+    color : purple;
+}
+
+formControl {
+    margin-bottom : 20px;
+    width: 95%,
+}
+
+.card-image{
+    width: 80%;
+    height: 200px;
+    display: inline-block;
+    margin: 0px auto 20px;
+    text-align: center;
+    border-radius: 5px;
+    border : 1px solid #374F6B;
 }
 
 @media (min-width : 500px) {
@@ -36,7 +54,7 @@
         display: inline-block;
         margin-left: 1%;
         margin-right: 1%;
-        height: 260px;
+        height: 460px;
         overflow:auto;
         overflow-x: hidden;
     }
@@ -44,11 +62,13 @@
         width: 30%;
     }      
     .missing-persons-card{
-        height: 300px;
+        height: 500px;
     }
-}
-
-formControl {
-    margin-bottom : 20px;
-    width: 95%,
+    .complaints-card{
+        height: 265px;
+    }
+    .card-image{
+        width: 60%;
+    }
+    
 }

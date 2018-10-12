@@ -3,12 +3,12 @@ import {withRouter} from 'react-router-dom';
 import * as firebase from 'firebase';
 import {connect} from 'react-redux';
 
-import '../../../Utils/Utility.css';
 import Reports from '../../../components/Reports/Reports';
 import * as actions from '../../../store/actions/index';
 import Card from '../../../hoc/Card/Card';
 import Spinner from './../../../components/UI/Spinner/Spinner';
 import Aux from '../../../hoc/Auxiliary/Auxiliary';
+import '../../../Utils/Utility.css';
 
 class MissingPersons extends Component{
     state = {
@@ -17,15 +17,19 @@ class MissingPersons extends Component{
 
     componentDidMount(){
         this.setState({ loading : true });
-        firebase.database().ref('/missingPersons').orderByChild('reporterId').equalTo(`${this.props.uid}`).on('value' , snapshot => {
-            const complaintsObj = snapshot.val();
-            let complaints = [];
-            for(let key in complaintsObj){
-                complaints.push({id : key, ...complaintsObj[key]})
-            }
-            this.props.onSetReports(complaints);
-            this.setState({ loading : false });
-        }); 
+        firebase.database()
+            .ref('/missingPersons')
+            .orderByChild('reporterId')
+            .equalTo(`${this.props.uid}`)
+            .on('value' , snapshot => {
+                const complaintsObj = snapshot.val();
+                let complaints = [];
+                for(let key in complaintsObj){
+                    complaints.push({id : key, ...complaintsObj[key]})
+                }
+                this.props.onSetReports(complaints);
+                this.setState({ loading : false });
+            }); 
     }
 
     clickedHandler = () => {
@@ -44,19 +48,26 @@ class MissingPersons extends Component{
                         let reportedAt = new Date(report.reportedAt).toString();
                         reportedAt = reportedAt.slice(0,reportedAt.length - 34);                        
                         return(
-                            <div className = "card-container missing-persons-card" key = {report.id} onClick = {this.props.isAdmin ? () => this.props.history.push(`/singleMissingPerson/${report.id}`) : null}>
+                            <div 
+                                className = "card-container missing-persons-card" 
+                                key = {report.id} 
+                                onClick = {this.props.isAdmin ? 
+                                            () => this.props.history.push(`/singleMissingPerson/${report.id}`) : 
+                                            null}>
                                 <Card>
-                                    <strong>Reported By</strong> : {report.reportedBy}<br/>
-                                    <strong>Reported At</strong> : {reportedAt}<br/>
-                                    <strong>Name</strong> : {report.name}<br/>
-                                    <strong>Age</strong> : {report.age}<br/>
-                                    <strong>Appearance</strong> : {report.appearance}<br/>
-                                    <strong>Mental Condition</strong> : {report.condition}<br/>  
-                                    <strong>Last Known Location</strong> : {report.location}<br/>
-                                    <strong>When</strong> : {report.time}<br/>
-                                    <strong>City</strong> : {report.city}<br/>
-                                    <strong>Status</strong> : {report.status}<br/>
-
+                                    <img src = {report.imgURL} className = "card-image" alt = "img"/>
+                                    <div className = "card-text">
+                                        <strong>Reported By</strong> : {report.reportedBy}<br/>
+                                        <strong>Reported At</strong> : {reportedAt}<br/>
+                                        <strong>Name</strong> : {report.name}<br/>
+                                        <strong>Age</strong> : {report.age}<br/>
+                                        <strong>Appearance</strong> : {report.appearance}<br/>
+                                        <strong>Mental Condition</strong> : {report.condition}<br/>  
+                                        <strong>Last Known Location</strong> : {report.location}<br/>
+                                        <strong>When</strong> : {report.time}<br/>
+                                        <strong>City</strong> : {report.city}<br/>
+                                        <strong>Status</strong> : {report.status}<br/>
+                                    </div>
                                 </Card>
                             </div> 
                         )   

@@ -9,3 +9,14 @@
 .active{
     font-weight: bold;
 }
+
+.toggle-button{
+    border-color: white !important;
+}
+
+.hamburger{
+        width: 35px;
+        height: 3px;
+        background-color: white;
+        margin: 6px 0;
+}

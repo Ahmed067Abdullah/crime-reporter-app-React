@@ -1,8 +1,9 @@
 import React from "react";
 import {NavLink, Link, withRouter} from 'react-router-dom';
-import './Navbar.css';
 import {connect} from 'react-redux';
+
 import Aux from '../../../hoc/Auxiliary/Auxiliary';
+import './Navbar.css';
 
 class Navbar extends React.Component {
   state = {
@@ -50,8 +51,10 @@ class Navbar extends React.Component {
     return (
       <nav className="navbar navbar-expand-lg navbar-light bg-light text-left Nav">
         <Link className="navbar-brand" to="#"><h3 className = "display-5 nav-text">Crime Reporter</h3></Link>
-        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
+        <button className="navbar-toggler toggle-button" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+          <div className = "hamburger"></div>
+          <div className = "hamburger"></div>
+          <div className = "hamburger"></div>
         </button>
         <div className="collapse navbar-collapse" id="navbarText">
           <ul className="navbar-nav mr-auto">
@@ -60,7 +63,7 @@ class Navbar extends React.Component {
               <NavLink className="nav-link nav-text" exact to="/crimes">Crimes</NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link nav-text" exact activeClassName = "active" to="/missingPersons">Missing Persons</NavLink>
+              <NavLink className="nav-link nav-text" exact to="/missingPersons">Missing Persons</NavLink>
             </li>
           </ul>
         </div>

@@ -1,20 +1,23 @@
 import React, {Component} from 'react';
 import * as firebase from 'firebase';
+
 import Card from '../../../hoc/Card/Card';
+
+// MUI imports start
 import Button from '@material-ui/core/Button';
 import { withStyles } from "@material-ui/core/styles";
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+// MUI imports end
 
 const styles = theme => {
     return {
         button: {
             backgroundColor : "#374F6B",
             color : "white",
-            margin : "0px auto",
-            marginLeft : "41%"
+            margin : "0px auto"
         },
         formControl: {
             margin : "20px auto",
@@ -79,15 +82,17 @@ class SingleComplaint extends Component{
                 {this.state.city ? 
                 <div className = "singles-card">
                     <Card>
-                        <strong>Reported By</strong> : {this.state.reportedBy}<br/>
-                        <strong>Reported At</strong> : {reportedAt}<br/>
-                        <strong>Against</strong> : {this.state.against}<br/>
-                        <strong>Type</strong> : {this.state.type}<br/>
-                        <strong>Description</strong> : {this.state.description}<br/>
-                        <strong>When</strong> : {this.state.time}<br/>
-                        <strong>Area</strong> : {this.state.area}<br/>  
-                        <strong>City</strong> : {this.state.city}<br/>
-                        <strong>Status</strong> : {this.state.status}<br/>
+                        <div className = "card-text">
+                            <strong>Reported By</strong> : {this.state.reportedBy}<br/>
+                            <strong>Reported At</strong> : {reportedAt}<br/>
+                            <strong>Against</strong> : {this.state.against}<br/>
+                            <strong>Type</strong> : {this.state.type}<br/>
+                            <strong>Description</strong> : {this.state.description}<br/>
+                            <strong>When</strong> : {this.state.time}<br/>
+                            <strong>Area</strong> : {this.state.area}<br/>  
+                            <strong>City</strong> : {this.state.city}<br/>
+                            <strong>Status</strong> : {this.state.status}<br/>
+                        </div>
                     </Card>
                     <FormControl className={this.props.classes.formControl}>
                         <InputLabel htmlFor="bg">Update Status</InputLabel>
@@ -104,7 +109,11 @@ class SingleComplaint extends Component{
                             <MenuItem value={"Canceled"}>Canceled</MenuItem>
                         </Select>
                     </FormControl><br/>
-                    <Button type="submit" variant="contained" className={this.props.classes.button} onClick = {this.clickedHandler}>Save</Button>
+                    <Button 
+                        type="submit" 
+                        variant="contained" 
+                        className={this.props.classes.button} 
+                        onClick = {this.clickedHandler}>Save</Button>
                 </div>
                  : null
             } 

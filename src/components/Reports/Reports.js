@@ -1,11 +1,15 @@
 import React from 'react';
 
+import Aux from '../../hoc/Auxiliary/Auxiliary';
+
+// Material UI imports start
 import { withStyles } from "@material-ui/core/styles";
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import Aux from '../../hoc/Auxiliary/Auxiliary';
+// Material UI imports end
+
 const styles = theme => {
     return {
         formControl: {

@@ -1,18 +1,22 @@
 import React, {Component} from 'react';
-import Button from '@material-ui/core/Button';
+import { connect } from 'react-redux';
+import * as firebase from 'firebase'
+
+import * as actions from '../../../store/actions/index';
+import Card from '../../../hoc/Card/Card';
+import Spinner from '../../../components/UI/Spinner/Spinner';
+import './ReportMissingPerson.css';
+
+// MUI imports start
 import { withStyles } from "@material-ui/core/styles";
+import Button from '@material-ui/core/Button';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
-import { connect } from 'react-redux';
-import * as actions from '../../../store/actions/index';
-import * as firebase from 'firebase'
+// MUI imports start
 
-import Card from '../../../hoc/Card/Card';
-import Spinner from '../../../components/UI/Spinner/Spinner';
-import './ReportMissingPerson.css';
 
 const styles = theme => {
     return {
@@ -45,7 +49,8 @@ class ReportMissingPerson extends Component{
         time : '',
         condition : '',
         error : '',
-        loading : false
+        loading : false,
+        image : null
     }
  
     componentDidMount() {
@@ -61,43 +66,81 @@ class ReportMissingPerson extends Component{
         this.setState({ [event.target.name] : event.target.value });
     }
 
-    handleSubmit = () => {
-        this.setState({loading : true});
-        const database = firebase.database();
-        const {name, age, city, location, appearance, time, condition,} = this.state;
-        const date = new Date().getTime();
-        database.ref('missingPersons/').push({
-            name,
-            age,
-            city,
-            location,
-            appearance,
-            time,
-            condition,
-            reportedAt : date,
-            reportedBy : this.props.uname,
-            reporterId : this.props.uid,
-            status : "Pending"
-        })
-        .then(res => {
-            this.setState({
-                loading : false,
-                error : null, 
-                name : '',
-                age : '',
-                city: 'karachi',
-                location : '',
-                appearance : '',
-                time : '',
-                condition : ''
-            });
-            alert("Report Submitted Successfully");
-        })
-        .catch(err => {
-            this.setState({loading : false, error : err});
-        })
+    fileChangedHandler = (event) => {
+        if(event.target.files[0]){
+            this.setState({image : event.target.files[0]})
+        }
     }
 
+    handleSubmit = () => {
+        const {image} = this.state
+        if(!image || (image && (image.type === 'image/jpeg' || image.type === 'image/png'))){
+            this.setState({loading : true});
+            const database = firebase.database();
+            const {name, age, city, location, appearance, time, condition,} = this.state;
+            const date = new Date().getTime();
+            database.ref('missingPersons/').push({
+                name,
+                age,
+                city,
+                location,
+                appearance,
+                time,
+                condition,
+                reportedAt : date,
+                reportedBy : this.props.uname,
+                reporterId : this.props.uid,
+                status : "Pending",
+                imgURL : 'http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg'
+            })
+            .then(res => {
+                if(image){
+                    const id = res.path.pieces_[1];
+                    let imgUpload = firebase.storage().ref(`missigPersonImages/${id}`).put(image);
+                    
+                    imgUpload.on('state_changed', 
+                        (snapshot) => {
+                         
+                        },(err) => {
+                            this.setState({loading : false, error : err});
+                        },() => {
+                            imgUpload.snapshot.ref.getDownloadURL()
+                                .then(downloadURL => {
+                                    const updateObj = {};
+                                    updateObj[`missingPersons/${id}/imgURL`] = downloadURL;
+                                    firebase.database().ref().update(updateObj)                            
+                                })
+                            this.submitCompleted();
+                        })
+                }        
+                else{
+                    this.submitCompleted();
+                }
+            })
+            .catch(err => {
+                this.setState({loading : false, error : err});
+            })
+        }
+        else{
+            alert("Only JPEG, JPG and PNG formats are allowed")
+        }
+    }
+    
+    submitCompleted = () => {
+        this.setState({
+            loading : false,
+            error : null, 
+            name : '',
+            age : '',
+            city: 'karachi',
+            location : '',
+            appearance : '',
+            time : '',
+            condition : '',
+            image : null
+        });
+        alert("Report Submitted Successfully");
+    }
 
 
     render(){
@@ -187,10 +230,12 @@ class ReportMissingPerson extends Component{
                                 <MenuItem value={"bahawalpur"}>Bahawalpur</MenuItem>
                             </Select>
                         </FormControl><br/>
-                        <label>Picture (If any) <input type = "file" className = {this.props.classes.file}/></label><br/>
-                        <Button type="submit" variant="contained" color="secondary" className="button">
-                            Post
-                        </Button>
+                        <label>Picture (If any) <input type = "file" className = {this.props.classes.file} onChange = {this.fileChangedHandler}/></label><br/>
+                        <Button 
+                            type="submit" 
+                            variant="contained" 
+                            color="secondary" 
+                            className="button">Post</Button>
                     </ValidatorForm>
                 </Card> : <div  className = "auth-spinner"><Spinner/></div>}           
             </div>
