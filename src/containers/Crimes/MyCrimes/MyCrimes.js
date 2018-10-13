@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import * as firebase from 'firebase';
 import {connect} from 'react-redux';
-
+ 
 import Reports from '../../../components/Reports/Reports';
 import * as actions from '../../../store/actions/index';
 import Card from '../../../hoc/Card/Card';
@@ -38,8 +38,10 @@ class Crimes extends Component{
 
     render(){
         let reports = '';
+        
         if(this.props.reports.length <= 0){
-            reports = <p className = "search-messsage">You Haven't Reported Any Crime Reports Yet</p>
+            reports = <p className = "search-messsage">You Haven't Reported Any Crime Reports Yet <br/>
+                        {this.props.isRegistered ? null : "Please Register as Reporter to Report Crimes"}</p>
         }    
         else{
             reports = (

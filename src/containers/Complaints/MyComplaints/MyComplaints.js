@@ -39,7 +39,8 @@ class Complaints extends Component{
     render(){
         let reports = '';
         if(this.props.reports.length <= 0){
-            reports = <p className = "search-messsage">You Haven't Reported Any Complaints Yet</p>
+            reports = <p className = "search-messsage">You Haven't Reported Any Complaints Yet <br/>
+                        {this.props.isRegistered ? null : "Please Register as Reporter to Report Your Complaints"}</p> 
         }    
         else{
             reports = (

@@ -90,7 +90,7 @@ class SingleMissingPerson extends Component{
                         <div className = "card-text">
                             <strong>Reported By</strong> : {this.state.reportedBy}<br/>
                             <strong>Reported At</strong> : {reportedAt}<br/>
-                            <strong>Age</strong> : {this.state.against}<br/>
+                            <strong>Age</strong> : {this.state.age}<br/>
                             <strong>Appearance</strong> : {this.state.appearance}<br/>
                             <strong>Mental Condition</strong> : {this.state.condition}<br/>
                             <strong>Last Known Location</strong> : {this.state.location}<br/>

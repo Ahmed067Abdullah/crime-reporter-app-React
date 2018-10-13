@@ -39,7 +39,8 @@ class MissingPersons extends Component{
     render(){
         let reports = '';
         if(this.props.reports.length <= 0){
-            reports = <p className = "search-messsage">You Haven't Reported Any Missing Persons Yet</p>
+            reports = <p className = "search-messsage">You Haven't Reported Any Missing Persons Yet <br/>
+                        {this.props.isRegistered ? null : "Please Register as Reporter to Report Missing Persons"}</p>
         }    
         else{
             reports = (

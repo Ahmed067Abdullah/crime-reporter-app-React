@@ -71,11 +71,16 @@ class Complaints extends Component{
                     })}
                 </div>
             )
-        }    
+        }   
+        let registerationMsg = '';
+        if(!this.props.isRegistered){
+            registerationMsg = <p className = "reg-warning">Please Register as Reporter to Report Your Complaints</p>
+        }
         return(
             <div>
                 {!this.state.loading ?  
                     <Aux>
+                        {registerationMsg}
                         <button 
                             className = "btn btn-info my-reports-button" 
                             disabled = {!this.props.isRegistered}
@@ -95,7 +100,7 @@ class Complaints extends Component{
 const mapStateToProps = state => {
     return{
         reports : state.reports.reports,
-        uid : state.auth.uid,
+        isAuth : state.auth.isAuth,
         isRegistered : state.auth.isRegistered,
         isAdmin : state.auth.isAdmin
     }

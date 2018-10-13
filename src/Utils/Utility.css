@@ -38,6 +38,10 @@ formControl {
     width: 95%,
 }
 
+.reg-warning{
+    margin-top : 10px;
+}
+
 .card-image{
     width: 80%;
     height: 200px;

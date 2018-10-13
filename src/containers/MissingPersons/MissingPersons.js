@@ -78,11 +78,19 @@ class MissingPersons extends Component{
                     })}
                 </div>
             )
+        }
+        let registerationMsg = '';
+        if(!this.props.isAuth){
+            registerationMsg = <p className = "reg-warning">Please Login to Explore Complete Application</p>
+        } 
+        else if(!this.props.isRegistered){
+            registerationMsg = <p className = "reg-warning">Please Register as Reporter to Report Missing Persons</p>
         }    
         return(
             <div>
                 {!this.state.loading ?  
                     <Aux>
+                        {registerationMsg}
                         <button 
                             className = "btn btn-info my-reports-button" 
                             onClick = {this.clickedHandler}
@@ -102,7 +110,7 @@ class MissingPersons extends Component{
 const mapStateToProps = state => {
     return{
         reports : state.reports.reports,
-        uid : state.auth.uid,
+        isAuth : state.auth.isAuth,
         isRegistered : state.auth.isRegistered,
         isAdmin : state.auth.isAdmin
     }

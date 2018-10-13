@@ -1,0 +1,1 @@
+https://crime-reporter-app-d0c94.firebaseapp.com/auth
