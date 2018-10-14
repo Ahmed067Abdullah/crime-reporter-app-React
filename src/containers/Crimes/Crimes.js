@@ -13,21 +13,27 @@ import '../../Utils/Utility.css';
 class Crimes extends Component{
     state = {
         city : '',
+        status : '',
         loading : false
     }
 
-    handleChange = (event) => {
-        const city = event.target.value;
-        this.setState({ [event.target.name] : city, loading : true });
-        firebase.database().ref('/crimes').orderByChild('city').equalTo(`${city}`).on('value' , snapshot => {
-            const complaintsObj = snapshot.val();
-            let complaints = [];
-            for(let key in complaintsObj){
-                complaints.push({id : key ,...complaintsObj[key]})
-            }
-            this.props.onSetReports(complaints);
-            this.setState({ loading : false });
-        });
+    handleChange = (event,searchKey) => {
+        const value = event.target.value;
+        this.setState({ [event.target.name] : value, loading : true });
+        firebase.database()
+            .ref('/crimes')
+            .orderByChild(searchKey)
+            .equalTo(`${value}`)
+            .on('value' , snapshot => {
+                const crimesObj = snapshot.val();
+                let crimes = [];
+                for(let key in crimesObj){
+                    crimes.push({id : key ,...crimesObj[key]})
+                }
+                this.props.onSetReports(crimes);
+                const conflict = searchKey === 'city' ? 'status' : 'city'; 
+                this.setState({ loading : false , [conflict] : ''});
+            });
     }
 
     clickedHandler = () => {
@@ -35,11 +41,12 @@ class Crimes extends Component{
     }
 
     render(){
+        console.log(this.state);
         let reports = '';
-        if(this.state.city === '')
-            reports = <p className = "search-messsage">Please Select a City to Continue</p>
+        if(this.state.city === '' && this.state.status === '')
+            reports = <p className = "search-messsage">Please Select {this.props.isAdmin ? "an Option to Search" : "a City to Continue"}</p>
         else if(this.props.reports.length <= 0){
-            reports = <p className = "search-messsage">No Crime Reports Found For The Selected City</p>
+            reports = <p className = "search-messsage">No Crime Reports Found For The Selected {this.props.isAdmin ? "Option" : "City"}</p>
         }    
         else{
             reports = (
@@ -77,10 +84,10 @@ class Crimes extends Component{
             )
         }
         let registerationMsg = '';
-        if(!this.props.isAuth){
+        if(!this.props.isAuth && !this.props.isAdmin){
             registerationMsg = <p className = "reg-warning">Please Login to Explore Complete Application</p>
         } 
-        else if(!this.props.isRegistered){
+        else if(!this.props.isRegistered && !this.props.isAdmin){
             registerationMsg = <p className = "reg-warning">Please Register as Reporter to Report Crimes</p>
         }   
         return(
@@ -94,8 +101,10 @@ class Crimes extends Component{
                             disabled = {!this.props.isRegistered}>Report New Crime</button>
                         <Reports
                             showCities = {true}
+                            showStatuses = {this.props.isAdmin}
                             handleChange = {this.handleChange}
                             city = {this.state.city}
+                            status = {this.state.status}
                             reports = {reports}/>
                     </Aux> :  <div  className = "spinner"><Spinner/></div>
                 }

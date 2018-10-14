@@ -13,24 +13,26 @@ import '../../Utils/Utility.css';
 class MissingPersons extends Component{
     state = {
         city : '',
+        status : '',
         loading : false
     }
 
-    handleChange = (event) => {
-        const city = event.target.value;
-        this.setState({ [event.target.name] : city, loading : true });
+    handleChange = (event,searchKey) => {
+        const value = event.target.value;
+        this.setState({ [event.target.name] : value, loading : true });
         firebase.database()
             .ref('/missingPersons')
-            .orderByChild('city')
-            .equalTo(`${city}`)
+            .orderByChild(searchKey)
+            .equalTo(`${value}`)
             .on('value' , snapshot => {
-                const complaintsObj = snapshot.val();
-                let complaints = [];
-                for(let key in complaintsObj){
-                    complaints.push({id : key, ...complaintsObj[key]})
+                const missingPersonsObj = snapshot.val();
+                let missingPersons = [];
+                for(let key in missingPersonsObj){
+                    missingPersons.push({id : key, ...missingPersonsObj[key]})
                 }
-                this.props.onSetReports(complaints);
-                this.setState({ loading : false });
+                this.props.onSetReports(missingPersons);
+                const conflict = searchKey === 'city' ? 'status' : 'city'; 
+                this.setState({ loading : false, [conflict] : '' });
             });
     }
 
@@ -40,10 +42,10 @@ class MissingPersons extends Component{
 
     render(){
         let reports = '';
-        if(this.state.city === '')
-            reports = <p className = "search-messsage">Please Select a City to Continue</p>
+        if(this.state.city === '' && this.state.status === '')
+            reports = <p className = "search-messsage">Please Select {this.props.isAdmin ? "an Option to Search" : "a City to Continue"}</p>
         else if(this.props.reports.length <= 0){
-            reports = <p className = "search-messsage">No Missing Persons Reports Found For The Selected City</p>
+            reports = <p className = "search-messsage">No Missing Persons Reports Found For The Selected {this.props.isAdmin ? "Option" : "City"}</p>
         }    
         else{
             reports = (
@@ -85,10 +87,10 @@ class MissingPersons extends Component{
             )
         }
         let registerationMsg = '';
-        if(!this.props.isAuth){
+        if(!this.props.isAuth && !this.props.isAdmin){
             registerationMsg = <p className = "reg-warning">Please Login to Explore Complete Application</p>
         } 
-        else if(!this.props.isRegistered){
+        else if(!this.props.isRegistered && !this.props.isAdmin){
             registerationMsg = <p className = "reg-warning">Please Register as Reporter to Report Missing Persons</p>
         }    
         return(
@@ -102,8 +104,10 @@ class MissingPersons extends Component{
                             disabled = {!this.props.isRegistered}>Report Missing Person</button>
                         <Reports
                             showCities = {true}
+                            showStatuses = {this.props.isAdmin}
                             handleChange = {this.handleChange}
                             city = {this.state.city}
+                            status = {this.state.status}
                             reports = {reports}/>
                     </Aux> :  <div  className = "spinner"><Spinner/></div>
                 }

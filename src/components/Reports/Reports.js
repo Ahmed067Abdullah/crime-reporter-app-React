@@ -20,6 +20,8 @@ const styles = theme => {
     }
 }
 const reports = (props) => {
+    console.log(props.status)
+    
     return(
         <div>
         {props.showCities ? 
@@ -28,7 +30,7 @@ const reports = (props) => {
                     <InputLabel htmlFor="bg">City</InputLabel>
                     <Select
                         value={props.city}
-                        onChange={props.handleChange}
+                        onChange={(event) => props.handleChange(event,'city')}
                         inputProps={{
                             name: 'city',
                             id: 'bg',
@@ -46,7 +48,26 @@ const reports = (props) => {
                     </Select>
                 </FormControl><br/>
             </Aux>
-        : null}    
+        : null}
+        {props.showStatuses ? 
+            <Aux>
+                <FormControl className={props.classes.formControl}>
+                    <InputLabel htmlFor="b">Status</InputLabel>
+                    <Select
+                        value={props.status}
+                        onChange={(event) => props.handleChange(event,'status')}
+                        inputProps={{
+                            name: 'status',
+                            id: 'b',
+                        }}>
+                        <MenuItem value={"Pending"}>Pending</MenuItem>
+                        <MenuItem value={"Working"}>Working</MenuItem>
+                        <MenuItem value={"Satisfied"}>Satisfied</MenuItem>
+                        <MenuItem value={"Canceled"}>Canceled</MenuItem>
+                    </Select>
+                </FormControl><br/>
+            </Aux>
+        : null}
         <div>
             {props.reports}
         </div>
