@@ -9,11 +9,13 @@ import './ReportCrime.css';
 
 // MUI imports start
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import { withStyles } from "@material-ui/core/styles";
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import DialogWindow from '../../../components/UI/DialogWindow/DialogWindow';
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 // MUI imports end
 
@@ -33,22 +35,27 @@ const styles = theme => {
         },
         file :{
             marginTop : "5px"
-        }
+        },
     }
 }
 
 class ReportCrime extends Component{
  
-    state = {
-        city: 'karachi',
-        area : '',
-        type : '',
-        time : '',
-        description : '',
-        error : '',
-        loading : false,
-        image : null
-    }
+    constructor(){
+        super();
+        this.date = new Date();
+        this.state = {
+            city: 'karachi',
+            area : '',
+            type : 'snatching',
+            time : `${this.date.getFullYear()}-${this.date.getMonth() + 1}-${this.date.getDate()}T${this.date.getHours()}:${this.date.getMinutes()}`,
+            description : '',
+            error : '',
+            loading : false,
+            image : null,
+            isSubmitted : false
+        }
+    }    
  
     componentDidMount() {
         ValidatorForm.addValidationRule('isSmallEnough', (value) => {
@@ -72,49 +79,54 @@ class ReportCrime extends Component{
     handleSubmit = () => {
         const {image} = this.state
         if(!image || (image && (image.type === 'image/jpeg' || image.type === 'image/png'))){
-            this.setState({loading : true});
-            const database = firebase.database();
-            const {city,area,type,time,description} = this.state;
-            const date = new Date().getTime();
-            database.ref('crimes/').push({
-                city,
-                area,
-                type,
-                time,
-                description,
-                reportedAt : date,
-                reportedBy : this.props.uname,
-                reporterId : this.props.uid,
-                status : "Pending",
-                imgURL : 'http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg'
-            })
-            .then(res => {
-                if(image){
-                    const id = res.path.pieces_[1];
-                    let imgUpload = firebase.storage().ref(`crimeImages/${id}`).put(image);
-                    
-                    imgUpload.on('state_changed', 
-                        (snapshot) => {
+            if(new Date(this.state.time).getTime() < new Date().getTime()){
+                this.setState({loading : true});
+                const database = firebase.database();
+                const {city,area,type,time,description} = this.state;
+                const date = new Date().getTime();
+                database.ref('crimes/').push({
+                    city,
+                    area,
+                    type,
+                    time,
+                    description,
+                    reportedAt : date,
+                    reportedBy : this.props.uname,
+                    reporterId : this.props.uid,
+                    status : "Pending",
+                    imgURL : 'http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg'
+                })
+                .then(res => {
+                    if(image){
+                        const id = res.path.pieces_[1];
+                        let imgUpload = firebase.storage().ref(`crimeImages/${id}`).put(image);
                         
-                        },(err) => {
-                            this.setState({loading : false, error : err});
-                        },() => {
-                            imgUpload.snapshot.ref.getDownloadURL()
-                                .then(downloadURL => {
-                                    const updateObj = {};
-                                    updateObj[`crimes/${id}/imgURL`] = downloadURL;
-                                    firebase.database().ref().update(updateObj)                            
+                        imgUpload.on('state_changed', 
+                            (snapshot) => {
+                            
+                            },(err) => {
+                                this.setState({loading : false, error : err});
+                            },() => {
+                                imgUpload.snapshot.ref.getDownloadURL()
+                                    .then(downloadURL => {
+                                        const updateObj = {};
+                                        updateObj[`crimes/${id}/imgURL`] = downloadURL;
+                                        firebase.database().ref().update(updateObj)                            
+                                })
+                               this.submitCompleted();
                             })
-                           this.submitCompleted();
-                        })
-                }
-                else{
-                    this.submitCompleted();
-                }
-            })
-            .catch(err => {
-                this.setState({loading : false, error : err});
-            })
+                    }
+                    else{
+                        this.submitCompleted();
+                    }
+                })
+                .catch(err => {
+                    this.setState({loading : false, error : err});
+                })
+            }
+            else{
+                alert("Invalid Time")
+            }
         }
         else{
             alert("Only JPEG, JPG and PNG formats are allowed")
@@ -122,25 +134,34 @@ class ReportCrime extends Component{
     }
 
     submitCompleted = () => {
+        this.date = new Date();
         this.setState({
             loading : false,
             error : null,
             city: 'karachi',
             area : '',
-            type : '',
-            time : '',
+            type : 'snatching',
+            time : `${this.date.getFullYear()}-${this.date.getMonth() + 1}-${this.date.getDate()}T${this.date.getHours()}:${this.date.getMinutes()}`,
             description : '',
-            image : null
+            image : null,
+            isSubmitted : true,
         });
-        alert("Report Submitted Successfully");   
     }
 
+    back = () => {
+        this.props.history.push('/crimes');
+    }
 
+    more = () => {
+        this.setState({isSubmitted : false});
+    }
 
     render(){
+        console.log(this.state.time);
         return(
      <div  className = "Main">
             <p className="h1 heading font-weight-bold">Report Crime</p>
+            {this.state.isSubmitted ? <DialogWindow back = {this.back} more = {this.more}/> : null}
             {!this.state.loading ?
                 <Card>
                     <p className = "Error">{this.state.error ? this.state.error  : null}</p>
@@ -169,6 +190,7 @@ class ReportCrime extends Component{
                         ref="form"
                         onSubmit={this.handleSubmit}
                         onError={errors => console.log(errors)}>
+                        
                         <TextValidator
                             className = {this.props.classes.TextFields}
                             label="Area"
@@ -178,24 +200,38 @@ class ReportCrime extends Component{
                             validators={['required']}
                             errorMessages={['This field is required']}
                         /><br/>
-                        <TextValidator
-                            className = {this.props.classes.TextFields}
-                            label="Type"
+                        
+                        <FormControl className={this.props.classes.formControl}>
+                            <InputLabel htmlFor="bg">Type</InputLabel>
+                            <Select
+                                value={this.state.type}
+                                onChange={this.handleChange}
+                                inputProps={{
+                                    name: 'type',
+                                    id: 'bg',
+                                }}>
+                                <MenuItem value={"snatching"}>Snatching</MenuItem>
+                                <MenuItem value={"cyber"}>Cyber Crime</MenuItem>
+                                <MenuItem value={"extortion"}>Extortion</MenuItem>
+                                <MenuItem value={"blackmail"}>Blackmail</MenuItem>
+                                <MenuItem value={"fraud"}>Fraud</MenuItem>
+                                <MenuItem value={"murder"}>Murder</MenuItem>
+                                <MenuItem value={"other"}>Other</MenuItem>
+                            </Select>
+                        </FormControl><br/>
+
+                        <TextField
+                            id="datetime-local"
+                            label="When it Happened"
+                            name = "time"
                             onChange={this.handleChange}
-                            name="type"
-                            value={this.state.type}
-                            validators={['required', 'isSmallEnough']}
-                            errorMessages={['This field is required', 'Only 256 Characters are allowed']}
-                        /><br/>
-                        <TextValidator
-                            className = {this.props.classes.TextFields}
-                            label="When"
-                            onChange={this.handleChange}
-                            name="time"
-                            value={this.state.time}
-                            validators={['required', 'isSmallEnough']}
-                            errorMessages={['This field is required', 'Only 256 Characters are allowed']}
-                        /><br/>
+                            type="datetime-local"
+                            defaultValue={this.state.time}
+                            className={this.props.classes.TextFields}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}/><br/>
+
                         <TextValidator
                             className = {this.props.classes.TextFields}
                             label="Breif Description"

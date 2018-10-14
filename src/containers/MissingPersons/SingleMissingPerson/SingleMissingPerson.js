@@ -86,7 +86,9 @@ class SingleMissingPerson extends Component{
                 {this.state.city ?  
                 <div className = "singles-card">
                     <Card>
-                        <img src = {this.state.imgURL} className = "card-image" alt = "img"/>
+                        <a href = {this.state.imgURL} rel="noopener noreferrer" target = "_blank">
+                            <img src = {this.state.imgURL} className = "card-image" alt = "img"/>
+                        </a>
                         <div className = "card-text">
                             <strong>Reported By</strong> : {this.state.reportedBy}<br/>
                             <strong>Reported At</strong> : {reportedAt}<br/>
@@ -94,7 +96,7 @@ class SingleMissingPerson extends Component{
                             <strong>Appearance</strong> : {this.state.appearance}<br/>
                             <strong>Mental Condition</strong> : {this.state.condition}<br/>
                             <strong>Last Known Location</strong> : {this.state.location}<br/>
-                            <strong>When</strong> : {this.state.time}<br/>
+                            <strong>Last Seen At</strong> : {this.state.time}<br/>
                             <strong>City</strong> : {this.state.city}<br/>
                             <strong>Status</strong> : {this.state.status}<br/>
                         </div>

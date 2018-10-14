@@ -48,6 +48,9 @@ class Complaints extends Component{
                     {this.props.reports.map(report => {
                         let reportedAt = new Date(report.reportedAt).toString();
                         reportedAt = reportedAt.slice(0,reportedAt.length - 34);
+
+                        let time = new Date(report.time).toString();
+                        time = time.slice(0,time.length - 34);
                         return(
                             <div 
                                 className = "card-container complaints-card" 
@@ -60,7 +63,7 @@ class Complaints extends Component{
                                         <strong>Against</strong> : {report.against}<br/>
                                         <strong>Type</strong> : {report.type}<br/>
                                         <strong>Description</strong> : {report.description}<br/>
-                                        <strong>When</strong> : {report.time}<br/>
+                                        <strong>When</strong> : {time}<br/>
                                         <strong>Area</strong> : {report.area}<br/>  
                                         <strong>City</strong> : {report.city}<br/>
                                         <strong>Status</strong> : {report.status}<br/>

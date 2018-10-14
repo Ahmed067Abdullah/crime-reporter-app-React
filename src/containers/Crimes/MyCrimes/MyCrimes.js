@@ -57,9 +57,10 @@ class Crimes extends Component{
                                             () => this.props.history.push(`/singleCrime/${report.id}`) : 
                                             null}>
                                 <Card>
-                                    <img src = {report.imgURL} className = "card-image" alt = "img"/>
+                                    <a href = {report.imgURL} rel="noopener noreferrer" target = "_blank">
+                                        <img src = {report.imgURL} className = "card-image" alt = "img"/>
+                                    </a>
                                     <div className = "card-text">
-                                        <strong>Reported By</strong> : {report.reportedBy}<br/>
                                         <strong>Reported At</strong> : {reportedAt}<br/>
                                         <strong>Type</strong> : {report.type}<br/>
                                         <strong>Description</strong> : {report.description}<br/>

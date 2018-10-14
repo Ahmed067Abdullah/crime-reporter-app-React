@@ -15,6 +15,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { withStyles } from "@material-ui/core/styles";
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
+import DialogWindow from '../../../components/UI/DialogWindow/DialogWindow';
 // Material UI Imports ens
 
 const styles = theme => {
@@ -44,7 +45,8 @@ class RegisterDonor extends Component{
         cnic : '',
         name : '',
         loading : false,
-        error : null
+        error : null,
+        isSubmitted : false
     }
 
     componentDidMount() {
@@ -98,18 +100,33 @@ class RegisterDonor extends Component{
             cnic
         })
         .then(res => {
-            this.setState({loading : false, error : null});
-            alert("Congratulations! You're Successfully Registered.")
+            this.setState({loading : false, error : null, isSubmitted : true});
             this.props.onSetRegistered(name);
         })
         .catch(err => {
             this.setState({loading : false, error : err});
         })
     }
+
+    more = () => {
+        this.props.history.push('/crimes');
+    }
+
+    back = () => {
+        this.setState({isSubmitted : false});
+    }
+
     render(){
         return(
             <div  className = "Main">
             <p className="h2 heading font-weight-bold">Register as Reporter</p>
+            {this.state.isSubmitted ? 
+                <DialogWindow 
+                    reg = {true}
+                    msg = "Congratulations! You're Successfully Registered" 
+                    back = {this.back} 
+                    more = {this.more}  />  : 
+                null}
             {this.state.loading ? <Spinner/> : 
             <Card>
                 <p className = "Error">{this.state.error ? this.state.error  : null}</p>                

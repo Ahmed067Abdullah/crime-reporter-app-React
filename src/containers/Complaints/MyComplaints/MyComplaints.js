@@ -57,7 +57,6 @@ class Complaints extends Component{
                                             null}>
                                 <Card>
                                     <div className = "card-text">
-                                        <strong>Reported By</strong> : {report.reportedBy}<br/>
                                         <strong>Reported At</strong> : {reportedAt}<br/>
                                         <strong>Against</strong> : {report.against}<br/>
                                         <strong>Type</strong> : {report.type}<br/>

@@ -54,7 +54,7 @@ class Layout extends Component{
             )
         }
         else if(this.props.isAuth){
-            routes = (
+            routes = ( 
             <Switch>
                 <Route path = "/auth" component = {Auth}/>
                 <Route path = "/register" component = {RegisterReporter}/>

@@ -11,6 +11,10 @@
     width: 90%;
 }
 
+.card-container:hover{
+    cursor: text;
+}
+
 .card-text{
     text-align: left;
 }

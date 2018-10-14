@@ -82,7 +82,9 @@ class SingleCrime extends Component{
                 {this.state.city ? 
                 <div className = "singles-card">
                     <Card>
-                        <img src = {this.state.imgURL} className = "card-image" alt = "img"/>
+                        <a href = {this.state.imgURL} rel="noopener noreferrer" target = "_blank">
+                            <img src = {this.state.imgURL} className = "card-image" alt = "img"/>
+                        </a>
                         <div className = "card-text">
                             <strong>Reported By</strong> : {this.state.reportedBy}<br/>
                             <strong>Reported At</strong> : {reportedAt}<br/>

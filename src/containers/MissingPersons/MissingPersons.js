@@ -51,6 +51,9 @@ class MissingPersons extends Component{
                     {this.props.reports.map(report => {
                         let reportedAt = new Date(report.reportedAt).toString();
                         reportedAt = reportedAt.slice(0,reportedAt.length - 34);
+
+                        let time = new Date(report.time).toString();
+                        time = time.slice(0,time.length - 34);
                         return(
                             <div 
                                 className = "card-container missing-persons-card" 
@@ -59,7 +62,9 @@ class MissingPersons extends Component{
                                             () => this.props.history.push(`/singleMissingPerson/${report.id}`) : 
                                             null}>
                                 <Card>
-                                    <img src = {report.imgURL} className = "card-image" alt = "img"/>
+                                    <a href = {report.imgURL} rel="noopener noreferrer" target = "_blank">
+                                        <img src = {report.imgURL} className = "card-image" alt = "img"/>
+                                    </a>
                                     <div className = "card-text">
                                         <strong>Reported By</strong> : {report.reportedBy}<br/>
                                         <strong>Reported At</strong> : {reportedAt}<br/>
@@ -68,7 +73,7 @@ class MissingPersons extends Component{
                                         <strong>Appearance</strong> : {report.appearance}<br/>
                                         <strong>Mental Condition</strong> : {report.condition}<br/>  
                                         <strong>Last Known Location</strong> : {report.location}<br/>
-                                        <strong>When</strong> : {report.time}<br/>
+                                        <strong>Last Seen At</strong> : {time}<br/>
                                         <strong>City</strong> : {report.city}<br/>
                                         <strong>Status</strong> : {report.status}<br/>
                                     </div>

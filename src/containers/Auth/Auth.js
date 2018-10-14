@@ -156,8 +156,11 @@ class Auth extends Component{
                             validators={['required', 'isLongEnough']}
                             errorMessages={['This field is required', 'Password must be longer than 6 characters']}
                         /><br/>
-                        <Button type="submit" variant="contained"  className={this.props.classes.button}>
-                            Submit
+                        <Button 
+                            type="submit" 
+                            variant="contained"  
+                            className={this.props.classes.button}>
+                            {this.props.isSignup ? "Sign Up" : "Sign In"}
                         </Button>
                     </ValidatorForm>
                     <p>{authMessage}<strong className = {this.props.classes.authMessage} onClick = {this.switchAuthState}>{authLink}</strong></p>

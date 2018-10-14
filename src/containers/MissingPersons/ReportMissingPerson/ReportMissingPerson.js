@@ -9,12 +9,14 @@ import './ReportMissingPerson.css';
 
 // MUI imports start
 import { withStyles } from "@material-ui/core/styles";
+import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
+import DialogWindow from '../../../components/UI/DialogWindow/DialogWindow';
 // MUI imports start
 
 
@@ -34,23 +36,28 @@ const styles = theme => {
         },
         file :{
             marginTop : "5px"
-        }
+        },
     }
 }
 
 class ReportMissingPerson extends Component{
- 
-    state = {
-        name : '',
-        age : '',
-        city: 'karachi',
-        location : '',
-        appearance : '',
-        time : '',
-        condition : '',
-        error : '',
-        loading : false,
-        image : null
+
+    constructor(){
+        super();
+        this.date = new Date();
+        this.state = {
+            name : '',
+            age : '',
+            city: 'karachi',
+            location : '',
+            appearance : '',
+            time : `${this.date.getFullYear()}-${this.date.getMonth() + 1}-${this.date.getDate()}T${this.date.getHours()}:${this.date.getMinutes()}`,
+            condition : '',
+            error : '',
+            loading : false,
+            image : null,
+            isSubmitted : false
+        }
     }
  
     componentDidMount() {
@@ -75,51 +82,56 @@ class ReportMissingPerson extends Component{
     handleSubmit = () => {
         const {image} = this.state
         if(!image || (image && (image.type === 'image/jpeg' || image.type === 'image/png'))){
-            this.setState({loading : true});
-            const database = firebase.database();
-            const {name, age, city, location, appearance, time, condition,} = this.state;
-            const date = new Date().getTime();
-            database.ref('missingPersons/').push({
-                name,
-                age,
-                city,
-                location,
-                appearance,
-                time,
-                condition,
-                reportedAt : date,
-                reportedBy : this.props.uname,
-                reporterId : this.props.uid,
-                status : "Pending",
-                imgURL : 'http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg'
-            })
-            .then(res => {
-                if(image){
-                    const id = res.path.pieces_[1];
-                    let imgUpload = firebase.storage().ref(`missigPersonImages/${id}`).put(image);
-                    
-                    imgUpload.on('state_changed', 
-                        (snapshot) => {
-                         
-                        },(err) => {
-                            this.setState({loading : false, error : err});
-                        },() => {
-                            imgUpload.snapshot.ref.getDownloadURL()
-                                .then(downloadURL => {
-                                    const updateObj = {};
-                                    updateObj[`missingPersons/${id}/imgURL`] = downloadURL;
-                                    firebase.database().ref().update(updateObj)                            
-                                })
-                            this.submitCompleted();
-                        })
-                }        
-                else{
-                    this.submitCompleted();
-                }
-            })
-            .catch(err => {
-                this.setState({loading : false, error : err});
-            })
+            if(new Date(this.state.time).getTime() < new Date().getTime()){
+                this.setState({loading : true});
+                const database = firebase.database();
+                const {name, age, city, location, appearance, time, condition,} = this.state;
+                const date = new Date().getTime();
+                database.ref('missingPersons/').push({
+                    name,
+                    age,
+                    city,
+                    location,
+                    appearance,
+                    time,
+                    condition,
+                    reportedAt : date,
+                    reportedBy : this.props.uname,
+                    reporterId : this.props.uid,
+                    status : "Pending",
+                    imgURL : 'http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg'
+                })
+                .then(res => {
+                    if(image){
+                        const id = res.path.pieces_[1];
+                        let imgUpload = firebase.storage().ref(`missigPersonImages/${id}`).put(image);
+                        
+                        imgUpload.on('state_changed', 
+                            (snapshot) => {
+                             
+                            },(err) => {
+                                this.setState({loading : false, error : err});
+                            },() => {
+                                imgUpload.snapshot.ref.getDownloadURL()
+                                    .then(downloadURL => {
+                                        const updateObj = {};
+                                        updateObj[`missingPersons/${id}/imgURL`] = downloadURL;
+                                        firebase.database().ref().update(updateObj)                            
+                                    })
+                                this.submitCompleted();
+                            })
+                    }        
+                    else{
+                        this.submitCompleted();
+                    }
+                })
+                .catch(err => {
+                    this.setState({loading : false, error : err});
+                })
+            }
+            else{
+                alert("Invalid Time")
+            }
         }
         else{
             alert("Only JPEG, JPG and PNG formats are allowed")
@@ -127,6 +139,7 @@ class ReportMissingPerson extends Component{
     }
     
     submitCompleted = () => {
+        this.date = new Date();
         this.setState({
             loading : false,
             error : null, 
@@ -135,18 +148,26 @@ class ReportMissingPerson extends Component{
             city: 'karachi',
             location : '',
             appearance : '',
-            time : '',
+            time : `${this.date.getFullYear()}-${this.date.getMonth() + 1}-${this.date.getDate()}T${this.date.getHours()}:${this.date.getMinutes()}`,
             condition : '',
-            image : null
+            image : null,
+            isSubmitted : true,
         });
-        alert("Report Submitted Successfully");
     }
 
+    back = () => {
+        this.props.history.push('/missingPersons');
+    }
+
+    more = () => {
+        this.setState({isSubmitted : false});
+    }
 
     render(){
         return(
      <div  className = "Main">
             <p className="h2 heading font-weight-bold">Report Missing Person</p>
+            {this.state.isSubmitted ? <DialogWindow back = {this.back} more = {this.more}/> : null}
             {!this.state.loading ?
                 <Card>
                     <p className = "Error">{this.state.error ? this.state.error  : null}</p>
@@ -200,15 +221,17 @@ class ReportMissingPerson extends Component{
                             validators={['required','isSmallEnough']}
                             errorMessages={['This field is required','Only 256 Characters are allowed']}
                         /><br/>
-                        <TextValidator
-                            className = {this.props.classes.TextFields}
-                            label="When"
+                        <TextField
+                            id="datetime-local"
+                            label="Last Seen At"
+                            name = "time"
+                            type="datetime-local"
                             onChange={this.handleChange}
-                            name="time"
-                            value={this.state.time}
-                            validators={['required', 'isSmallEnough']}
-                            errorMessages={['This field is required', 'Only 256 Characters are allowed']}
-                        /><br/>
+                            defaultValue={`${this.date.getFullYear()}-${this.date.getMonth() + 1}-${this.date.getDate()}T${this.date.getHours()}:${this.date.getMinutes()}`}
+                            className={this.props.classes.TextFields}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}/><br/>
                         <FormControl className={this.props.classes.formControl}>
                             <InputLabel htmlFor="bg">City</InputLabel>
                             <Select
