@@ -135,8 +135,7 @@ class Auth extends Component{
                     <ValidatorForm
                         ref="form"
                         onSubmit={this.handleSubmit}
-                        onError={errors => console.log(errors)}
-                    >
+                        onError={errors => console.log(errors)}>
                         <TextValidator
                             className = {this.props.classes.TextFields}
                             label="Email"

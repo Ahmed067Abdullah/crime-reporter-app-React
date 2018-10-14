@@ -154,8 +154,8 @@ class ReportComplaint extends Component{
                             onChange={this.handleChange}
                             name="area"
                             value={this.state.area}
-                            validators={['required']}
-                            errorMessages={['This field is required']}
+                            validators={['required', 'isSmallEnough']}
+                            errorMessages={['This field is required', 'Only 256 Characters are allowed']}
                         /><br/>
 
                         <FormControl className={this.props.classes.formControl}>

@@ -10,10 +10,15 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 // MUI imports start
 
 const styles = theme => {
     return {
+        TextFields : {
+            marginBottom : "20px",
+            width : "95%"
+        },
         button: {
             backgroundColor : "#374F6B",
             color : "white",
@@ -42,6 +47,7 @@ class SingleMissingPerson extends Component{
         reportedAt : '',
         reporterId : '',
         status : '',
+        reason : '',
         updatedStatus : '',
         id : '',
         imgURL : ''
@@ -60,6 +66,7 @@ class SingleMissingPerson extends Component{
                 reportedBy : snapshot.val().reportedBy,
                 reportedAt : snapshot.val().reportedAt,
                 reporterId : snapshot.val().reporterId,
+                reason : snapshot.val().reason ? snapshot.val().reason : '',
                 status : snapshot.val().status,
                 imgURL : snapshot.val().imgURL,
                 updatedStatus : snapshot.val().status,
@@ -72,10 +79,13 @@ class SingleMissingPerson extends Component{
         this.setState({ [event.target.name] : event.target.value });
     }
 
-    clickedHandler = () => {
-        const status = {}
-        status[`missingPersons/${this.state.id}/status`] = this.state.updatedStatus;
-        firebase.database().ref().update(status);
+    handleSubmit = () => {
+        if(!(this.state.updatedStatus === 'Canceled' && this.state.reason === '')){
+            const status = {}
+            status[`missingPersons/${this.state.id}/status`] = this.state.updatedStatus;
+            status[`missingPersons/${this.state.id}/reason`] = this.state.reason;
+            firebase.database().ref().update(status);
+        }
     }
 
     render(){
@@ -116,13 +126,30 @@ class SingleMissingPerson extends Component{
                             <MenuItem value={"Canceled"}>Canceled</MenuItem>
                         </Select>
                     </FormControl><br/>
-                    <Button 
-                        type="submit" 
-                        variant="contained" 
-                        className={this.props.classes.button} 
-                        onClick = {this.clickedHandler}>Save</Button>
+
+                    <ValidatorForm
+                        ref="form"
+                        onSubmit={this.handleSubmit}
+                        onError={errors => console.log(errors)}>
+                        {this.state.updatedStatus === 'Canceled' ? 
+                            <TextValidator
+                                className = {this.props.classes.TextFields}
+                                label="Reason"
+                                onChange={this.handleChange}
+                                name="reason"
+                                value={this.state.reason}
+                                validators={['required', 'isSmallEnough']}
+                                errorMessages={['This field is required', 'Only 256 Characters are allowed']}/> :
+                            null}
+                        <br/>
+                        <Button 
+                            type="submit" 
+                            variant="contained" 
+                            className={this.props.classes.button} 
+                            onClick = {this.handleSubmit}>Save</Button>
+                    </ValidatorForm>
                 </div>
-                : null
+                 : null
             } 
             </div>
         )
