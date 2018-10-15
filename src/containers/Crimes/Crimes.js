@@ -19,21 +19,43 @@ class Crimes extends Component{
 
     handleChange = (event,searchKey) => {
         const value = event.target.value;
-        this.setState({ [event.target.name] : value, loading : true });
-        firebase.database()
-            .ref('/crimes')
-            .orderByChild(searchKey)
-            .equalTo(`${value}`)
-            .on('value' , snapshot => {
-                const crimesObj = snapshot.val();
-                let crimes = [];
-                for(let key in crimesObj){
-                    crimes.push({id : key ,...crimesObj[key]})
+        if(this.props.isAdmin){
+            this.setState({ [event.target.name] : value }, () => {
+                if(this.state.status !== '' && this.state.city !== ''){
+                    this.setState({loading : true});
+                    let query = firebase.database().ref('/crimes').orderByChild('city').equalTo(this.state.city)
+                    if(this.state.city === 'all')
+                        query = firebase.database().ref('/crimes')
+    
+                    query.on('value' , snapshot => {
+                        const crimesObj = snapshot.val();
+                        let crimes = [];
+                        for(let key in crimesObj){
+                            if(crimesObj[key].status === this.state.status ||  this.state.status === 'all')
+                                crimes.push({id : key ,...crimesObj[key]})
+                        }
+                        this.props.onSetReports(crimes);
+                        this.setState({ loading : false});
+                    });
                 }
-                this.props.onSetReports(crimes);
-                const conflict = searchKey === 'city' ? 'status' : 'city'; 
-                this.setState({ loading : false , [conflict] : ''});
             });
+        }
+        else{
+            this.setState({ [event.target.name] : value, loading : true });
+            firebase.database()
+                .ref('/crimes')
+                .orderByChild('city')
+                .equalTo(value)
+                .on('value' , snapshot => {
+                    const crimesObj = snapshot.val();
+                    let crimes = [];
+                    for(let key in crimesObj){
+                        crimes.push({id : key ,...crimesObj[key]})
+                    }
+                    this.props.onSetReports(crimes);
+                    this.setState({ loading : false});
+                });
+        }
     }
 
     clickedHandler = () => {
@@ -41,12 +63,13 @@ class Crimes extends Component{
     }
 
     render(){
-        console.log(this.state);
+        console.log(this.props);
         let reports = '';
-        if(this.state.city === '' && this.state.status === '')
-            reports = <p className = "search-messsage">Please Select {this.props.isAdmin ? "an Option to Search" : "a City to Continue"}</p>
+        if((this.props.isAdmin && (this.state.city === '' || this.state.status === '')) 
+            || this.state.city === '')
+            reports = <p className = "search-messsage">Please Select {this.props.isAdmin ? "City and Status to Search" : "a City to Continue"}</p>
         else if(this.props.reports.length <= 0){
-            reports = <p className = "search-messsage">No Crime Reports Found For The Selected {this.props.isAdmin ? "Option" : "City"}</p>
+            reports = <p className = "search-messsage">No Crime Reports Found For The Selected {this.props.isAdmin ? "Combination" : "City"}</p>
         }    
         else{
             reports = (
@@ -57,6 +80,10 @@ class Crimes extends Component{
 
                         let time = new Date(report.time).toString();
                         time = time.slice(0,time.length - 34);
+
+                        let reason = null 
+                        if(report.reason) 
+                            reason = <p><strong>Reason</strong> : {report.reason}</p>
                         return(
                             <div 
                                 className = "card-container" 
@@ -75,6 +102,7 @@ class Crimes extends Component{
                                         <strong>Area</strong> : {report.area}<br/>  
                                         <strong>City</strong> : {report.city}<br/>
                                         <strong>Status</strong> : {report.status}<br/>
+                                        {reason}
                                     </div>
                                 </Card>
                             </div> 

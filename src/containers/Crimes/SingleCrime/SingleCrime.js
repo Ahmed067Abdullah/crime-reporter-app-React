@@ -84,9 +84,10 @@ class SingleCrime extends Component{
 
     handleSubmit = () => {
         if(!(this.state.updatedStatus === 'Canceled' && this.state.reason.trim() === '')){
+            let reason = this.state.updatedStatus === 'Canceled' ? this.state.reason : ''
             const status = {}
             status[`crimes/${this.state.id}/status`] = this.state.updatedStatus;
-            status[`crimes/${this.state.id}/reason`] = this.state.reason;
+            status[`crimes/${this.state.id}/reason`] = reason;
             firebase.database().ref().update(status);
         }
     }
@@ -94,6 +95,11 @@ class SingleCrime extends Component{
     render(){
         let reportedAt = new Date(this.state.reportedAt).toString();
         reportedAt = reportedAt.slice(0,reportedAt.length - 34);     
+
+        let reason = null 
+        if(this.state.reason) 
+            reason = <p><strong>Reason</strong> : {this.state.reason}</p>
+
         return(
             <div className = {this.props.classes.Main}>
                 {this.state.city ? 
@@ -111,6 +117,7 @@ class SingleCrime extends Component{
                             <strong>Area</strong> : {this.state.area}<br/>  
                             <strong>City</strong> : {this.state.city}<br/>
                             <strong>Status</strong> : {this.state.status}<br/>
+                            {reason}
                         </div>
                     </Card>
                     <FormControl className={this.props.classes.formControl}>

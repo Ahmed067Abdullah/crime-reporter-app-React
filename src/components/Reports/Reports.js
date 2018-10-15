@@ -21,7 +21,7 @@ const styles = theme => {
 }
 const reports = (props) => {
     console.log(props.status)
-    
+     
     return(
         <div>
         {props.showCities ? 
@@ -45,6 +45,7 @@ const reports = (props) => {
                         <MenuItem value={"peshawar"}>Peshawar</MenuItem>
                         <MenuItem value={"quettaB"}>Quetta</MenuItem>
                         <MenuItem value={"bahawalpur"}>Bahawalpur</MenuItem>
+                        <MenuItem value={"all"}>All Cities</MenuItem>
                     </Select>
                 </FormControl><br/>
             </Aux>
@@ -64,6 +65,7 @@ const reports = (props) => {
                         <MenuItem value={"Working"}>Working</MenuItem>
                         <MenuItem value={"Satisfied"}>Satisfied</MenuItem>
                         <MenuItem value={"Canceled"}>Canceled</MenuItem>
+                        <MenuItem value={"all"}>All Statuses</MenuItem>
                     </Select>
                 </FormControl><br/>
             </Aux>

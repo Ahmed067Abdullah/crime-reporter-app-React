@@ -2,7 +2,7 @@ import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
     isAuth : false,
-    isSignup : true,
+    isSignup : false,
     isRegistered : false,
     uid : '',
     uname : '',

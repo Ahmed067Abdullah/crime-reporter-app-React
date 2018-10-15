@@ -19,21 +19,42 @@ class Complaints extends Component{
 
     handleChange = (event,searchKey) => {
         const value = event.target.value;
-        console.log(event.target.name);
-        this.setState({ [event.target.name] : value, loading : true });
-        firebase.database().ref('/complaints')
-            .orderByChild(searchKey)
-            .equalTo(`${value}`)
-            .on('value' , snapshot => {
-                const complaintsObj = snapshot.val();
-                let complaints = [];
-                for(let key in complaintsObj){
-                    complaints.push({id : key, ...complaintsObj[key]})
+        if(this.props.isAdmin){
+            this.setState({ [event.target.name] : value }, () => {
+                if(this.state.status !== '' && this.state.city !== ''){
+                    this.setState({loading : true});
+                    let query = firebase.database().ref('/complaints').orderByChild('city').equalTo(this.state.city)
+                    if(this.state.city === 'all')
+                        query = firebase.database().ref('/complaints')
+    
+                    query.on('value' , snapshot => {
+                        const complaintsObj = snapshot.val();
+                        let complaints = [];
+                        for(let key in complaintsObj){
+                            if(complaintsObj[key].status === this.state.status ||  this.state.status === 'all')
+                                complaints.push({id : key, ...complaintsObj[key]})
+                        }
+                        this.props.onSetReports(complaints);
+                        this.setState({ loading : false});
+                    });
                 }
-                this.props.onSetReports(complaints);
-                const conflict = searchKey === 'city' ? 'status' : 'city'; 
-                this.setState({ loading : false , [conflict] : ''});
             });
+        }
+        else{
+            this.setState({ [event.target.name] : value, loading : true });
+            firebase.database().ref('/complaints')
+                .orderByChild('city')
+                .equalTo(value)
+                .on('value' , snapshot => {
+                    const complaintsObj = snapshot.val();
+                    let complaints = [];
+                    for(let key in complaintsObj){
+                        complaints.push({id : key, ...complaintsObj[key]})
+                    }
+                    this.props.onSetReports(complaints);
+                    this.setState({ loading : false});
+                });
+        }
     }
 
     clickedHandler = () => {
@@ -42,10 +63,11 @@ class Complaints extends Component{
 
     render(){
         let reports = '';
-        if(this.state.city === '' && this.state.status === '')
-            reports = <p className = "search-messsage">Please Select {this.props.isAdmin ? "an Option to Search" : "a City to Continue"}</p>
+        if((this.props.isAdmin && (this.state.city === '' || this.state.status === '')) 
+            || this.state.city === '')
+            reports = <p className = "search-messsage">Please Select {this.props.isAdmin ? "City and Status to Search" : "a City to Continue"}</p>
         else if(this.props.reports.length <= 0){
-            reports = <p className = "search-messsage">No Complaints Found For The Selected {this.props.isAdmin ? "Option" : "City"}</p>
+            reports = <p className = "search-messsage">No Complaints Found For The Selected {this.props.isAdmin ? "Combination" : "City"}</p>
         }    
         else{
             reports = (
@@ -56,6 +78,11 @@ class Complaints extends Component{
 
                         let time = new Date(report.time).toString();
                         time = time.slice(0,time.length - 34);
+
+                        let reason = null 
+                        if(report.reason) 
+                            reason = (<p><strong>Reason</strong> : {report.reason}</p>)
+
                         return(
                             <div 
                                 className = "card-container complaints-card" 
@@ -72,6 +99,7 @@ class Complaints extends Component{
                                         <strong>Area</strong> : {report.area}<br/>  
                                         <strong>City</strong> : {report.city}<br/>
                                         <strong>Status</strong> : {report.status}<br/>
+                                        {reason}
                                     </div>    
                                 </Card>
                             </div> 

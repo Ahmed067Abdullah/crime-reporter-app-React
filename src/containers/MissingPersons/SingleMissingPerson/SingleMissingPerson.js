@@ -81,16 +81,22 @@ class SingleMissingPerson extends Component{
 
     handleSubmit = () => {
         if(!(this.state.updatedStatus === 'Canceled' && this.state.reason === '')){
+            let reason = this.state.updatedStatus === 'Canceled' ? this.state.reason : ''
             const status = {}
             status[`missingPersons/${this.state.id}/status`] = this.state.updatedStatus;
-            status[`missingPersons/${this.state.id}/reason`] = this.state.reason;
+            status[`missingPersons/${this.state.id}/reason`] = reason;
             firebase.database().ref().update(status);
         }
     }
 
     render(){
         let reportedAt = new Date(this.state.reportedAt).toString();
-        reportedAt = reportedAt.slice(0,reportedAt.length - 34);     
+        reportedAt = reportedAt.slice(0,reportedAt.length - 34);  
+        
+        let reason = null 
+        if(this.state.reason) 
+            reason = <p><strong>Reason</strong> : {this.state.reason}</p>
+
         return(
             <div className = {this.props.classes.Main}>
                 {this.state.city ?  
@@ -109,6 +115,7 @@ class SingleMissingPerson extends Component{
                             <strong>Last Seen At</strong> : {this.state.time}<br/>
                             <strong>City</strong> : {this.state.city}<br/>
                             <strong>Status</strong> : {this.state.status}<br/>
+                            {reason}
                         </div>
                     </Card>
                     <FormControl className={this.props.classes.formControl}>

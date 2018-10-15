@@ -19,21 +19,43 @@ class MissingPersons extends Component{
 
     handleChange = (event,searchKey) => {
         const value = event.target.value;
-        this.setState({ [event.target.name] : value, loading : true });
-        firebase.database()
-            .ref('/missingPersons')
-            .orderByChild(searchKey)
-            .equalTo(`${value}`)
-            .on('value' , snapshot => {
-                const missingPersonsObj = snapshot.val();
-                let missingPersons = [];
-                for(let key in missingPersonsObj){
-                    missingPersons.push({id : key, ...missingPersonsObj[key]})
+        if(this.props.isAdmin){
+            this.setState({ [event.target.name] : value }, () => {
+                if(this.state.status !== '' && this.state.city !== ''){
+                    this.setState({loading : true});
+                    let query = firebase.database().ref('/missingPersons').orderByChild('city').equalTo(this.state.city)
+                    if(this.state.city === 'all')
+                        query = firebase.database().ref('/missingPersons')
+    
+                    query.on('value' , snapshot => {
+                        const missingPersonsObj = snapshot.val();
+                        let missingPersons = [];
+                        for(let key in missingPersonsObj){
+                            if(missingPersonsObj[key].status === this.state.status ||  this.state.status === 'all')
+                                missingPersons.push({id : key, ...missingPersonsObj[key]})
+                        }
+                        this.props.onSetReports(missingPersons);
+                        this.setState({ loading : false});
+                    });
                 }
-                this.props.onSetReports(missingPersons);
-                const conflict = searchKey === 'city' ? 'status' : 'city'; 
-                this.setState({ loading : false, [conflict] : '' });
             });
+        }
+        else{
+            this.setState({ [event.target.name] : value, loading : true });
+            firebase.database()
+                .ref('/crimes')
+                .orderByChild('city')
+                .equalTo(value)
+                .on('value' , snapshot => {
+                    const crimesObj = snapshot.val();
+                    let crimes = [];
+                    for(let key in crimesObj){
+                        crimes.push({id : key ,...crimesObj[key]})
+                    }
+                    this.props.onSetReports(crimes);
+                    this.setState({ loading : false });
+                });
+        }
     }
 
     clickedHandler = () => {
@@ -42,10 +64,11 @@ class MissingPersons extends Component{
 
     render(){
         let reports = '';
-        if(this.state.city === '' && this.state.status === '')
-            reports = <p className = "search-messsage">Please Select {this.props.isAdmin ? "an Option to Search" : "a City to Continue"}</p>
+        if((this.props.isAdmin && (this.state.city === '' || this.state.status === '')) 
+            || this.state.city === '' )
+            reports = <p className = "search-messsage">Please Select {this.props.isAdmin ? "City and Status to Search" : "a City to Continue"}</p>
         else if(this.props.reports.length <= 0){
-            reports = <p className = "search-messsage">No Missing Persons Reports Found For The Selected {this.props.isAdmin ? "Option" : "City"}</p>
+            reports = <p className = "search-messsage">No Missing Persons Reports Found For The Selected {this.props.isAdmin ? "Combination" : "City"}</p>
         }    
         else{
             reports = (
@@ -56,6 +79,11 @@ class MissingPersons extends Component{
 
                         let time = new Date(report.time).toString();
                         time = time.slice(0,time.length - 34);
+
+                        let reason = null 
+                        if(report.reason) 
+                            reason = <p><strong>Reason</strong> : {report.reason}</p>
+
                         return(
                             <div 
                                 className = "card-container missing-persons-card" 
@@ -78,6 +106,7 @@ class MissingPersons extends Component{
                                         <strong>Last Seen At</strong> : {time}<br/>
                                         <strong>City</strong> : {report.city}<br/>
                                         <strong>Status</strong> : {report.status}<br/>
+                                        {reason}
                                     </div>
                                 </Card>
                             </div> 
