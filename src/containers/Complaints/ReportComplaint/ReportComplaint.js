@@ -89,7 +89,7 @@ class ReportComplaint extends Component{
                 this.setState({
                     loading : false,
                     error : null,
-                    city: 'karachi',
+                    city:  this.state.city,
                     area : '',
                     type : 'burglary',
                     time : `${this.date.getFullYear()}-${this.date.getMonth() + 1}-${this.date.getDate()}T${this.date.getHours()}:${this.date.getMinutes()}`,

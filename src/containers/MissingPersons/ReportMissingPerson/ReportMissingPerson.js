@@ -67,6 +67,13 @@ class ReportMissingPerson extends Component{
             }
             return true;
         });
+
+        ValidatorForm.addValidationRule('validAge', (value) => {
+            if (value  < 0 || value > 150) {
+                return false;
+            }
+            return true;
+        });
     }
  
     handleChange = (event) => {
@@ -145,7 +152,7 @@ class ReportMissingPerson extends Component{
             error : null, 
             name : '',
             age : '',
-            city: 'karachi',
+            city: this.state.city,
             location : '',
             appearance : '',
             time : `${this.date.getFullYear()}-${this.date.getMonth() + 1}-${this.date.getDate()}T${this.date.getHours()}:${this.date.getMinutes()}`,
@@ -191,8 +198,8 @@ class ReportMissingPerson extends Component{
                             onChange={this.handleChange}
                             name="age"
                             value={this.state.age}
-                            validators={['required','matchRegexp:^[0-9]*$']}
-                            errorMessages={['This field is required','Invalid Age']}
+                            validators={['required','matchRegexp:^[0-9]*$','validAge']}
+                            errorMessages={['This field is required','Invalid Age','Invalid Age']}
                         /><br/>
                         <TextValidator
                             className = {this.props.classes.TextFields}

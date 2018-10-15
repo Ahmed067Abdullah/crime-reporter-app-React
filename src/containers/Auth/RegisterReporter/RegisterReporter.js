@@ -71,6 +71,13 @@ class RegisterDonor extends Component{
             return true;
         });
 
+        ValidatorForm.addValidationRule('validAge', (value) => {
+            if (value  < 0 || value > 150) {
+                return false;
+            }
+            return true;
+        });
+
         if(this.props.isRegistered){
             firebase.database().ref(`reporters/${this.props.uid}`).once('value')
                 .then(snapshot =>{
@@ -168,8 +175,8 @@ class RegisterDonor extends Component{
                         onChange={this.handleChange}
                         name="age"
                         value={this.state.age}
-                        validators={['required','matchRegexp:^[0-9]*$']}
-                        errorMessages={['This field is required','Invalid Age']}/><br/>
+                        validators={['required','matchRegexp:^[0-9]*$'], 'validAge'}
+                        errorMessages={['This field is required','Invalid Age','Invalid Age']}/><br/>
                         
                     <FormControl className = {this.props.classes.TextFields}>
                         <InputLabel htmlFor="bg">City</InputLabel>
