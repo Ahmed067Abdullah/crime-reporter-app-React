@@ -157,7 +157,6 @@ class ReportCrime extends Component{
     }
 
     render(){
-        console.log(this.state.time);
         return(
      <div  className = "Main">
             <p className="h1 heading font-weight-bold">Report Crime</p>

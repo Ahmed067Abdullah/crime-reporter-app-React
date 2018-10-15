@@ -175,7 +175,7 @@ class RegisterDonor extends Component{
                         onChange={this.handleChange}
                         name="age"
                         value={this.state.age}
-                        validators={['required','matchRegexp:^[0-9]*$'], 'validAge'}
+                        validators={['required','matchRegexp:^[0-9]*$', 'validAge']}
                         errorMessages={['This field is required','Invalid Age','Invalid Age']}/><br/>
                         
                     <FormControl className = {this.props.classes.TextFields}>
