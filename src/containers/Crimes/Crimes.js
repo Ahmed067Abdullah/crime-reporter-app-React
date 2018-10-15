@@ -3,6 +3,7 @@ import {withRouter} from 'react-router-dom';
 import * as firebase from 'firebase';
 import {connect} from 'react-redux';
 
+import {sliceTime} from '../../Utils/Utility';
 import Reports from '../../components/Reports/Reports';
 import * as actions from '../../store/actions/index';
 import Card from '../../hoc/Card/Card';
@@ -63,7 +64,6 @@ class Crimes extends Component{
     }
 
     render(){
-        console.log(this.props);
         let reports = '';
         if((this.props.isAdmin && (this.state.city === '' || this.state.status === '')) 
             || this.state.city === '')
@@ -75,15 +75,17 @@ class Crimes extends Component{
             reports = (
                 <div className = "reports-container">
                     {this.props.reports.map(report => {
-                        let reportedAt = new Date(report.reportedAt).toString();
-                        reportedAt = reportedAt.slice(0,reportedAt.length - 34);
+                        let reportedAt = sliceTime(report.reportedAt)
+                        let time = sliceTime(report.time)
 
-                        let time = new Date(report.time).toString();
-                        time = time.slice(0,time.length - 34);
-
-                        let reason = null 
+                        let reason = null;
+                        let finalResponse = null;
                         if(report.reason) 
-                            reason = <p><strong>Reason</strong> : {report.reason}</p>
+                            reason = <Aux><strong>Reason</strong> : {report.reason}<br/></Aux>
+                        if(report.finalResponseAt){
+                            let finalResponseAt = sliceTime(report.finalResponseAt)
+                            finalResponse = <Aux><strong>{report.status ===  "Canceled" ? "Canceled" : "Satisfied"} At</strong> : {finalResponseAt}</Aux>
+                        }
                         return(
                             <div 
                                 className = "card-container" 
@@ -103,6 +105,7 @@ class Crimes extends Component{
                                         <strong>City</strong> : {report.city}<br/>
                                         <strong>Status</strong> : {report.status}<br/>
                                         {reason}
+                                        {finalResponse}
                                     </div>
                                 </Card>
                             </div> 
@@ -124,7 +127,7 @@ class Crimes extends Component{
                     <Aux>
                         {registerationMsg}
                         <button 
-                            className = {"btn btn-info my-reports-button"} 
+                            className = "btn btn-info my-reports-button" 
                             onClick = {this.clickedHandler}
                             disabled = {!this.props.isRegistered}>Report New Crime</button>
                         <Reports

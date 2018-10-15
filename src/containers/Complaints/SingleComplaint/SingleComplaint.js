@@ -2,8 +2,10 @@ import React, {Component} from 'react';
 import * as firebase from 'firebase';
 
 import Card from '../../../hoc/Card/Card';
+import Aux from '../../../hoc/Auxiliary/Auxiliary';
 
 // MUI imports start
+import {sliceTime} from '../../../Utils//Utility';
 import Button from '@material-ui/core/Button';
 import { withStyles } from "@material-ui/core/styles";
 import InputLabel from '@material-ui/core/InputLabel';
@@ -46,26 +48,31 @@ class SingleComplaint extends Component{
         reportedAt : '',
         reporterId : '',
         status : '',
+        finalResponseAt : '',
         updatedStatus : '',
         reason : '',
+        updatedReason : '',
         id : ''
     }
 
     componentDidMount() {
         firebase.database().ref(`complaints/${this.props.match.params.id}`).on('value', snapshot => {
+            const res = snapshot.val();
             this.setState({
-                against : snapshot.val().against,
-                city: snapshot.val().city,
-                area : snapshot.val().area,
-                type : snapshot.val().type,
-                time : snapshot.val().time,
-                description : snapshot.val().description,
-                reportedBy : snapshot.val().reportedBy,
-                reportedAt : snapshot.val().reportedAt,
-                reporterId : snapshot.val().reporterId,
-                status : snapshot.val().status,
-                reason : snapshot.val().reason ? snapshot.val().reason : '',
-                updatedStatus : snapshot.val().status,
+                against : res.against,
+                city: res.city,
+                area : res.area,
+                type : res.type,
+                time : res.time,
+                description : res.description,
+                reportedBy : res.reportedBy,
+                reportedAt : res.reportedAt,
+                reporterId : res.reporterId,
+                status : res.status,
+                reason : res.reason ? res.reason : '',
+                updatedReason : res.reason ? res.reason : '',
+                finalResponseAt : res.finalResponseAt ? res.finalResponseAt : '',
+                updatedStatus : res.status,
                 id : this.props.match.params.id
             })
         })
@@ -79,12 +86,15 @@ class SingleComplaint extends Component{
     }
 
     handleSubmit = () => {
-        if(!(this.state.updatedStatus === 'Canceled' && this.state.reason.trim() === '')){
-            let reason = this.state.updatedStatus === 'Canceled' ? this.state.reason : ''
+        if(!(this.state.updatedStatus === 'Canceled' && this.state.updatedReason.trim() === '')){
+            let reason = this.state.updatedStatus === 'Canceled' ? this.state.updatedReason : ''
+            let finalResponseAt = this.state.updatedStatus === 'Canceled' || this.state.updatedStatus === 'Satisfied' ? new Date().getTime() : ''
             const status = {}
             status[`complaints/${this.state.id}/status`] = this.state.updatedStatus;
             status[`complaints/${this.state.id}/reason`] = reason;
+            status[`complaints/${this.state.id}/finalResponseAt`] = finalResponseAt;
             firebase.database().ref().update(status);
+            // this.back();
         }
     }
     
@@ -92,14 +102,22 @@ class SingleComplaint extends Component{
         this.setState({ [event.target.name] : event.target.value });
     }
 
+    back = () => {
+        this.props.history.push('/complaints')
+    }
+
     render(){
-        let reportedAt = new Date(this.state.reportedAt).toString();
-        reportedAt = reportedAt.slice(0,reportedAt.length - 34);     
+        let reportedAt = sliceTime(this.state.reportedAt)
+        let time = sliceTime(this.state.time)
 
         let reason = null 
-        if(this.state.reason) 
-            reason = <p><strong>Reason</strong> : {this.state.reason}</p>
-
+        let finalResponse = null;
+        if(this.state.reason ) 
+            reason = <Aux><strong>Reason</strong> : {this.state.reason}<br/></Aux>
+        if(this.state.finalResponseAt){
+            let finalResponseAt = sliceTime(this.state.finalResponseAt)
+            finalResponse = <Aux><strong>{this.state.status ===  "Canceled" ? "Canceled" : "Satisfied"} At</strong> : {finalResponseAt}</Aux>
+        }
         return(
             <div className = {this.props.classes.Main}>
                 {this.state.city ? 
@@ -111,11 +129,12 @@ class SingleComplaint extends Component{
                             <strong>Against</strong> : {this.state.against}<br/>
                             <strong>Type</strong> : {this.state.type}<br/>
                             <strong>Description</strong> : {this.state.description}<br/>
-                            <strong>When</strong> : {this.state.time}<br/>
+                            <strong>When</strong> : {time}<br/>
                             <strong>Area</strong> : {this.state.area}<br/>  
                             <strong>City</strong> : {this.state.city}<br/>
                             <strong>Status</strong> : {this.state.status}<br/>
                             {reason}
+                            {finalResponse}
                         </div>
                     </Card>
                     <FormControl className={this.props.classes.formControl}>
@@ -143,16 +162,21 @@ class SingleComplaint extends Component{
                                 className = {this.props.classes.TextFields}
                                 label="Reason"
                                 onChange={this.handleChange}
-                                name="reason"
-                                value={this.state.reason}
+                                name="updatedReason"
+                                value={this.state.updatedReason}
                                 validators={['required', 'isSmallEnough']}
                                 errorMessages={['This field is required', 'Only 256 Characters are allowed']}/> :
                             null}
                         <br/>
                         <Button 
+                            variant="contained" 
+                            className = "btn btn-info my-reports-button single-button" 
+                            onClick = {this.back}>Back</Button>
+
+                        <Button 
                             type="submit" 
                             variant="contained" 
-                            className={this.props.classes.button} 
+                            className = "btn btn-info my-reports-button single-button" 
                             onClick = {this.handleSubmit}>Save</Button>
                     </ValidatorForm>
                 </div>

@@ -6,6 +6,14 @@
     color : white !important;
 }
 
+.single-button{
+    margin-right: 10px !important;
+} 
+
+.login-button{
+    margin-bottom: 15px !important;
+}
+
 .card-container{
     margin: 0px auto 10px;
     width: 90%;

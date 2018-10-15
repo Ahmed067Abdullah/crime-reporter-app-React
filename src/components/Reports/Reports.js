@@ -45,7 +45,7 @@ const reports = (props) => {
                         <MenuItem value={"peshawar"}>Peshawar</MenuItem>
                         <MenuItem value={"quettaB"}>Quetta</MenuItem>
                         <MenuItem value={"bahawalpur"}>Bahawalpur</MenuItem>
-                        <MenuItem value={"all"}>All Cities</MenuItem>
+                        {props.showStatuses ? <MenuItem value={"all"}>All Cities</MenuItem> : null}
                     </Select>
                 </FormControl><br/>
             </Aux>

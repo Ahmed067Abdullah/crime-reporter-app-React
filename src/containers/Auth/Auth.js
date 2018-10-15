@@ -159,7 +159,7 @@ class Auth extends Component{
                         <Button 
                             type="submit" 
                             variant="contained"  
-                            className={this.props.classes.button}>
+                            className = "btn btn-info my-reports-button login-button">
                             {this.props.isSignup ? "Sign Up" : "Sign In"}
                         </Button>
                     </ValidatorForm>

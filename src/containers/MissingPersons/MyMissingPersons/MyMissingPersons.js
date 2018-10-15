@@ -3,6 +3,7 @@ import {withRouter} from 'react-router-dom';
 import * as firebase from 'firebase';
 import {connect} from 'react-redux';
 
+import {sliceTime} from '../../../Utils/Utility';
 import Reports from '../../../components/Reports/Reports';
 import * as actions from '../../../store/actions/index';
 import Card from '../../../hoc/Card/Card';
@@ -46,13 +47,17 @@ class MissingPersons extends Component{
             reports = (
                 <div className = "reports-container">
                     {this.props.reports.map(report => {
-                        let reportedAt = new Date(report.reportedAt).toString();
-                        reportedAt = reportedAt.slice(0,reportedAt.length - 34); 
-                        
-                        let reason = null 
-                        if(report.reason) 
-                            reason = (<p><strong>Reason</strong> : {report.reason}</p>)
+                        let time = sliceTime(report.time)
+                        let reportedAt = sliceTime(report.reportedAt)
+                        let reason = null;       
+                        let finalResponse = null;
 
+                        if(report.reason) 
+                            reason = <Aux><strong>Reason</strong> : {report.reason}<br/></Aux>
+                        if(report.finalResponseAt){
+                            let finalResponseAt =  sliceTime(report.finalResponseAt)   
+                            finalResponse = <Aux><strong>{report.status ===  "Canceled" ? "Canceled" : "Satisfied"} At</strong> : {finalResponseAt}</Aux>
+                        }
                         return(
                             <div 
                                 className = "card-container missing-persons-card" 
@@ -71,10 +76,11 @@ class MissingPersons extends Component{
                                         <strong>Appearance</strong> : {report.appearance}<br/>
                                         <strong>Mental Condition</strong> : {report.condition}<br/>  
                                         <strong>Last Known Location</strong> : {report.location}<br/>
-                                        <strong>When</strong> : {report.time}<br/>
+                                        <strong>When</strong> : {time}<br/>
                                         <strong>City</strong> : {report.city}<br/>
                                         <strong>Status</strong> : {report.status}<br/>
                                         {reason}
+                                        {finalResponse}
                                     </div>
                                 </Card>
                             </div> 
