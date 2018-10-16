@@ -79,8 +79,7 @@ class Auth extends Component{
             firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.pass)
             .then(res =>{
                 const uid = res.user.uid;
-                // RkpPKqNLeaTeHS5poTCWTJd70fK2
-                if(uid === 'TYxGMD5DpHUSQXacnoV3HcbR9NC3'){
+                if(uid === 'RkpPKqNLeaTeHS5poTCWTJd70fK2'){
                     this.props.setAdmin()
                     this.props.onLogin(uid);
                     this.props.history.replace("/crimes");

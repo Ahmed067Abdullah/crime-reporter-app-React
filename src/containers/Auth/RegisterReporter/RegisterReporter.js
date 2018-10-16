@@ -200,7 +200,9 @@ class RegisterDonor extends Component{
                         </Select>
                     </FormControl><br/>  
 
-                    <Button className = {this.props.classes.Button} type="submit">{this.props.isRegistered ? "Update" : "Register"}</Button>
+                    <Button
+                        className = "btn btn-info my-reports-button login-button" 
+                        type="submit">{this.props.isRegistered ? "Update" : "Register"}</Button>
                 </ValidatorForm>
             </Card>}
             </div>
