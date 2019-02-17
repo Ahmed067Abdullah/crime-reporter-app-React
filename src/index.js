@@ -11,12 +11,7 @@ import './index.css';
 
   // Initialize Firebase
   const config = {
-    apiKey: "AIzaSyBHhUSlFpKkNDfJ4TRFhp9XzGsgd1WEpj0",
-    authDomain: "crime-reporter-app-d0c94.firebaseapp.com",
-    databaseURL: "https://crime-reporter-app-d0c94.firebaseio.com",
-    projectId: "crime-reporter-app-d0c94",
-    storageBucket: "crime-reporter-app-d0c94.appspot.com",
-    messagingSenderId: "1020973732708"
+
   };
 initializeApp(config);
 
